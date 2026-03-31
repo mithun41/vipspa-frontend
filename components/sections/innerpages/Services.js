@@ -1,0 +1,25 @@
+import Link from "next/link";
+import Services1 from "@/components/sections/Services7";
+import Services3 from "@/components/sections/Services3";
+import Services5 from "@/components/sections/Services2";
+import { useEffect, useState } from "react";
+const Services = () => {
+  const [homeData, setHomeData] = useState(null);
+    useEffect(() => {
+      fetch("http://127.0.0.1:8000/api/vipspa/service/")
+        .then((res) => res.json())
+        .then((data) => setHomeData(data))
+        .catch((err) => console.error(err));
+    }, []);
+  return (
+    <>
+      <section className="services-section pt-100">
+        <Services1 />
+        <Services3 services={homeData?.top_services || []}/>
+        {/* <Services5 /> */}
+        <div className="service1-pattrn1 bounce-y"></div>
+      </section>
+    </>
+  );
+};
+export default Services;

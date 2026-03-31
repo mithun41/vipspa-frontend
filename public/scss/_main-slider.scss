@@ -1,0 +1,196 @@
+/*** 
+
+====================================================================
+  Main Slider
+====================================================================
+
+***/
+
+.main-slider {
+  position: relative;
+  .sub-title {
+    color: var(--headings-color);
+    font-size: 20px;
+    font-weight: 400;
+    position: relative;
+    display: inline-block;
+    line-height: var(--sec-title-subtitle-line-height);
+    font-family: var(--sec-title-subtitle-font-family);
+    margin-top: 0;
+  }
+  .title {
+    text-transform: uppercase;
+    position: relative;
+    font-size: var(--h1-font-size);
+    font-weight: 700;
+    line-height: 1.211em;
+    margin-bottom: 20px;
+    @media (max-width: 801.98px) {
+      font-size: 50px;
+    }
+    @media (max-width: 424.98px) {
+      font-size: 48px;
+    }
+  }
+  .text{
+    max-width: 40%;
+    position: relative;
+    @media (max-width: 1280px) {
+      max-width: 50%;
+    }
+    @media (max-width: 767px) {
+      max-width: 80%;
+    }
+    @media (max-width: 575px) {
+      max-width: initial;
+    }
+  }
+  .style-title {
+    bottom: 0;
+    color: var(--theme-color-light);
+    font-family: var(--title-font);
+    font-size: 216px;
+    font-weight: 700;
+    line-height: 115px;
+    letter-spacing: 47.5px;
+    left: 0;
+    margin: 0 auto;
+    opacity: 0.5;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    text-transform: uppercase;
+    @media (max-width: 1445.98px) {
+      font-size: 130px;
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+    }
+    @media (max-width: 1199.98px) {
+      letter-spacing: 27px;
+      font-size: 100px;
+    }
+    @media (max-width: 801.98px) {
+      letter-spacing: 16px;
+      font-size: 52px;
+    }
+    @media (max-width: 479.98px) {
+      letter-spacing: 21px;
+      font-size: 52px;
+    }
+  }
+  .image-curve {
+    background-image: url(../images/main-slider/slide-shape-bottom.png);
+    position: absolute;
+    width: 100%;
+    height: 69px;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    @media (max-width: 1199.98px) {
+      display: none;
+    }
+  }
+  .image-style-one {
+    @media (max-width: 1199.98px) {
+      display: none;
+    }
+  }
+  .image-curve{
+    background-image: url(../images/main-slider/slide-shape-bottom.png);
+    bottom: 0;
+    height: 69px;
+    left: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+  }
+  .content-box{
+    padding: 175px 0 400px;
+    @media (max-width: 1199.98px) {
+      padding-left: 15px;
+      padding: 120px 0 200px 15px;
+    }
+    .image-leap{
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+    .image{
+      position: absolute;
+    }
+    .home2-circle-img{
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+    .image2{
+      bottom: 0;
+      left: 0;
+      margin: 0 auto;
+      position: absolute;
+      right: 0;
+      text-align: center;
+      @media (max-width: 1199.98px) {
+        text-align: right;
+      }
+      @media (max-width: 767.98px) {
+        display: none;
+      }
+    }
+  }
+  &.slider-style-two{
+    .content-box{
+      padding: 255px 0 250px;
+      @media (max-width: 1280px) {
+        padding-left: 15px;
+      }
+      @media (max-width: 767px) {
+        padding: 100px 0 100px 25px;
+      }
+    }
+    .content-box .image2{
+      left: 30%;
+    }
+    .swiper-button-prev,
+    .swiper-button-next{
+      background-color: rgba(28, 26, 29, 0.5);
+      border-radius: 50%;
+      height: 80px;
+      line-height: 80px;
+      text-align: center;
+      width: 80px;
+      -webkit-transition: all 300ms ease;
+      transition: all 300ms ease;
+      &:hover{
+        background-color: rgba(194, 167, 78, 0.5);
+      }
+      @media (max-width: 1280px) {
+        height: 60px;
+        line-height: 60px;
+        width: 60px;
+      }
+    }
+    .swiper-button-prev:after{
+      content: "\f177";
+      font-family: "Font Awesome 6 Pro";
+    }
+    .swiper-button-next:after{
+      content: "\f178";
+      font-family: "Font Awesome 6 Pro";
+    }
+    .swiper-button-prev:after,
+    .swiper-button-next:after{
+      color: var(--theme-color-light);
+      font-size: 30px;
+      font-weight: 300;
+      @media (max-width: 1280px) {
+        font-size: 18px;
+      }     
+    }
+  }
+}
+
+.bounce-z {
+  animation: fa-spin 70s infinite;
+}

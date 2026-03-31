@@ -1,0 +1,437 @@
+
+/*** 
+
+====================================================================
+  Anim Icons
+====================================================================
+
+***/
+  
+.reveal {
+    position: relative;
+    display: inline-flex;
+    visibility: hidden;
+    overflow: hidden;
+    img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        transform-origin: left;
+    }   
+}
+
+.anim-icons {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+    max-width: calc(var(--container-width) - 30px);
+    margin: 0 auto;
+}
+
+[text-split] {
+    opacity: 0;
+}
+
+.word {
+    overflow: hidden;
+    padding-bottom: 0;
+    margin-bottom: -0.1em;
+    transform-origin: bottom;
+}
+
+.anim-icons.full-width {
+    max-width: 100%;
+}
+
+.anim-icons .icon {
+    position: absolute;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+.icon-wheel-1 {
+    width: 144px;
+    height: 163px;
+}
+
+.icon-wheel-2 {
+    width: 144px;
+    height: 163px;
+}
+
+.icon-wheel-3 {
+    width: 149px;
+    height: 147px;
+}
+
+.icon-wheel-5 {
+    width: 144px;
+    height: 163px;
+}
+
+.icon-wheel-compass-1 {
+    width: 171px;
+    height: 176px;
+}
+
+.icon-wheel-compass-2 {
+    width: 97px;
+    height: 99px;
+}
+
+.icon-wheel-compass-3 {
+    width: 103px;
+    height: 106px;
+}
+
+.icon-anchor-1 {
+    width: 138px;
+    height: 136px;
+}
+
+.icon-sailboat-line-1 {
+    width: 431px;
+    height: 705px;
+}
+
+.icon-sailboat-line-3 {
+    width: 242px;
+    height: 250px;
+}
+
+.icon-sailboat-line-4 {
+    width: 369px;
+    height: 728px;
+}
+
+.icon-big-boat-1 {
+    width: 800px;
+    height: 464px;
+}
+
+.icon-big-boat-2 {
+    width: 229px;
+    height: 739px;
+}
+
+.icon-big-boat-3 {
+    width: 373px;
+    height: 126px;
+}
+
+.icon-big-boat-5 {
+    width: 229px;
+    height: 739px;
+}
+
+.icon-pattern1 {
+    width: 494px;
+    height: 465px;
+}
+
+.icon-pattern2 {
+    width: 247px;
+    height: 477px;
+}
+
+.icon-plane-1{
+    width: 350px;
+    height: 349px;
+}
+
+.icon-plane-2 {
+    width: 106px;
+    height: 640px;
+}
+
+.icon-plane-3 {
+    width: 455px;
+    height: 420px;
+}
+
+.icon-plane-4 {
+    width: 301px;
+    height: 336px;
+}
+
+.icon-plane-5 {
+    width: 313px;
+    height: 253px;
+}
+
+.icon-plane-6 {
+    width: 188px;
+    height: 110px;
+}
+
+.icon-plane-7 {
+    width: 256px;
+    height: 255px;
+}
+
+.icon-plane-8 {
+    width: 374px;
+    height: 194px;
+}
+
+.icon-plane-9 {
+    width: 313px;
+    height: 253px;
+}
+
+.icon-big-arrow {
+    width: 1279px;
+    height: 250px;
+}
+
+
+
+
+
+
+.bounce-y{
+    animation: bounce-y 10s infinite linear;
+}
+
+.bounce-x{
+    animation: bounce-x 10s infinite linear;
+}
+
+.zoom-one{
+    animation: zoom-one 10s infinite linear;
+}
+
+.zoom-two{
+    animation: zoom-two 5s infinite linear;
+}
+
+.zoom-three{
+    animation: zoom-three 5s infinite linear;
+}
+
+@keyframes float{
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce-y {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-30px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes bounce-x {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(30px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes zoom-one {
+    0% {
+        transform: scale(.95);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(.95);
+    }
+}
+
+@keyframes zoom-two {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(.95);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes round-shape-anim {
+    0% {
+        box-shadow: 0 0 0 0 rgba(194, 167, 78, .08), 0 0 0 30px rgba(194, 167, 78, .08), 0 0 0 50px rgba(194, 167, 78, .08);
+    }
+    100% {
+        box-shadow: 0 0 0 30px rgba(194, 167, 78, .08), 0 0 0 50px rgba(194, 167, 78, .08), 0 0 0 70px rgba(194, 167, 78, 0);
+    }
+}
+
+
+.overlay-anim {
+    position: relative;
+    &:after {
+        background: rgba(255, 255, 255, 0.3);
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 0;
+        opacity: 1;
+        z-index: 9;
+        pointer-events: none;
+    }
+    &:hover{
+        &:after {
+            height: 100%;
+            opacity: 0;
+            transition: all 400ms linear;
+        }
+    }   
+}
+
+.overlay-anim-two {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 0;
+    &:hover {
+        &:after {
+            left: 0;
+            right: 0;
+            opacity: 0;
+            transition: all 400ms linear;
+        }
+    }
+    &:after {
+        background: rgba(255, 255, 255, .3);
+        bottom: 0;
+        content: "";
+        left: 50%;
+        position: absolute;
+        right: 51%;
+        top: 0;
+        opacity: 1;
+        pointer-events: none;
+        transition: all 300ms linear;
+    }
+}
+
+
+
+// Animated Moving Circles
+
+.circle {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    left: -10px;
+    top: -10px;
+    border-radius: 100%;
+    z-index: 1;
+    pointer-events: none;
+    z-index: 10000;
+    transform: scale(1);
+    @supports (mix-blend-mode: difference) {
+        background-color: white;
+        mix-blend-mode: difference;
+    }
+    @include for-md{
+        display: none !important;
+    }
+}
+
+.circle-follow {
+    position: fixed;
+    mix-blend-mode: difference;
+    width: 30px;
+    height: 30px;
+    left: -21px;
+    top: -21px;
+    border-radius: 100%;
+    z-index: 1;
+    user-select: none;
+    pointer-events: none;
+    z-index: 10000;
+    transform: scale(1);
+    @supports (mix-blend-mode: difference) {
+        border: 1px solid #fff;
+        mix-blend-mode: difference;
+    }
+    @include for-md {
+        display: none !important;
+    }
+}
+
+
+/* Animate 1 */
+.owl-carousel{
+    .animate-7,
+    .animate-6,
+    .animate-5,
+    .animate-4,
+    .animate-3,
+    .animate-2,
+    .animate-1{
+        opacity: 0;
+        transform: translateY(100px);
+        transition: all 500ms ease;
+    }
+    .animate-x {
+        opacity: 0;
+        transform: translateX(100px);
+        transition: all 500ms ease;
+    }
+    
+    .active{
+        .animate-7,
+        .animate-6,
+        .animate-5,
+        .animate-4,
+        .animate-3,
+        .animate-2,
+        .animate-1 {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .animate-2 {
+            transition-delay: 300ms;
+        }
+        .animate-3 {
+            transition-delay: 600ms;
+        }
+        .animate-4 {
+            transition-delay: 900ms;
+        }
+        .animate-5 {
+            transition-delay: 1200ms;
+        }
+        .animate-6 {
+            transition-delay: 1500ms;
+        }
+        .animate-7 {
+            transition-delay: 1800ms;
+        }
+    }
+}
