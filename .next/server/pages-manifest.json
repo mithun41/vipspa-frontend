@@ -3,6 +3,9 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/": "pages/index.js",
-  "/admin/video": "pages/admin/video.js",
-  "/page-services": "pages/page-services.js"
+  "/admin/settings": "pages/admin/settings.js",
+  "/page-contact": "pages/page-contact.js",
+  "/page-pricing": "pages/page-pricing.js",
+  "/page-services": "pages/page-services.js",
+  "/page-about": "pages/page-about.js"
 }

@@ -39,10 +39,10 @@ export default function AdminLogin() {
                 // ড্যাশবোর্ডে রিডাইরেক্ট
                 router.push('/admin');
             } else {
-                setError('ইউজারনেম বা পাসওয়ার্ড ভুল মামা! আবার ট্রাই করেন।');
+                setError('Invalid credentials. Please try again.');
             }
         } catch (err) {
-            setError('সার্ভারের সাথে কানেক্ট হতে পারছে না। Django কি চালু আছে?');
+            setError('server error. Please try again later.');
         } finally {
             setLoading(false);
         }

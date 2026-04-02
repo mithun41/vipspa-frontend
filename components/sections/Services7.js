@@ -1,5 +1,9 @@
 import Link from "next/link";
-const Services7 = () => {
+
+const Services7 = ({ services = [] }) => {
+  // যদি ডাটা না থাকে তাহলে সেকশনটি দেখাবে না
+  if (!services || services.length === 0) return null;
+
   return (
     <>
       <section className="service-section-home7">
@@ -19,130 +23,49 @@ const Services7 = () => {
                     </h2>
                   </div>
                 </div>
-                <div className="col-sm-6">
-                  <div className="service-block">
-                    <div className="inner-box">
-                      <div className="image-box">
-                        <div
-                          className="bg-image"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/serviceitembg.png)",
-                          }}
-                        ></div>
-                        <div
-                          className="bg-image-two"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/service1-2.png)",
-                          }}
-                        ></div>
-                      </div>
-                      <div className="content-box">
-                        <figure className="icon mb-0">
-                          <img src="images/icons/theme-icon5.png" alt="Image" />
-                        </figure>
-                        <h4 className="title">
-                          <Link href="page-service-details">Dry Massage</Link>
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="service-block">
-                    <div className="inner-box">
-                      <div className="image-box">
-                        <div
-                          className="bg-image"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/serviceitembg.png)",
-                          }}
-                        ></div>
-                        <div
-                          className="bg-image-two"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/service1-2.png)",
-                          }}
-                        ></div>
-                      </div>
-                      <div className="content-box">
-                        <figure className="icon mb-0">
-                          <img src="images/icons/theme-icon6.png" alt="Image" />
-                        </figure>
-                        <h4 className="title">
-                          <Link href="page-service-details">Thai Massage</Link>
-                        </h4>
+
+                {/* ম্যাপ ফাংশন শুরু */}
+                {services.map((item, index) => (
+                  <div key={item.id || index} className="col-sm-6">
+                    <div className="service-block">
+                      <div className="inner-box">
+                        <div className="image-box">
+                          <div
+                            className="bg-image"
+                            style={{
+                              backgroundImage: "url(/images/resource/serviceitembg.png)",
+                            }}
+                          ></div>
+                          <div
+                            className="bg-image-two"
+                            style={{
+                              // যদি ব্যাকএন্ডে main_image থাকে তবে সেটা দেখাবে, নাহলে ডিফল্ট স্ট্যাটিক ইমেজ
+                              backgroundImage: `url(${item.main_image || "/images/resource/service1-2.png"})`,
+                            }}
+                          ></div>
+                        </div>
+                        <div className="content-box">
+                          <figure className="icon mb-0">
+                            {/* ডাইনামিক আইকন */}
+                            <img 
+                              src={item.icon_image || `images/icons/theme-icon${index + 5}.png`} 
+                              alt={item.title} 
+                              
+                            />
+                          </figure>
+                          <h4 className="title">
+                            <Link href={`/services/${item.id}`}>{item.title}</Link>
+                          </h4>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="service-block">
-                    <div className="inner-box">
-                      <div className="image-box">
-                        <div
-                          className="bg-image"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/serviceitembg.png)",
-                          }}
-                        ></div>
-                        <div
-                          className="bg-image-two"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/service1-2.png)",
-                          }}
-                        ></div>
-                      </div>
-                      <div className="content-box">
-                        <figure className="icon mb-0">
-                          <img src="images/icons/theme-icon7.png" alt="Image" />
-                        </figure>
-                        <h4 className="title">
-                          <Link href="page-service-details">
-                            Aroma Oil Massage
-                          </Link>
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="col-sm-6">
-                  <div className="service-block">
-                    <div className="inner-box">
-                      <div className="image-box">
-                        <div
-                          className="bg-image"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/serviceitembg.png)",
-                          }}
-                        ></div>
-                        <div
-                          className="bg-image-two"
-                          style={{
-                            backgroundImage:
-                              "url(/images/resource/service1-2.png)",
-                          }}
-                        ></div>
-                      </div>
-                      <div className="content-box">
-                        <figure className="icon mb-0">
-                          <img src="images/icons/theme-icon8.png" alt="Image" />
-                        </figure>
-                        <h4 className="title">
-                          <Link href="page-service-details">Nuru Massage</Link>
-                        </h4>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                ))}
+                {/* ম্যাপ ফাংশন শেষ */}
+
               </div>
             </div>
+            
             <div className="col-lg-6">
               <div className="about-style-home7">
                 <div className="thumb">
@@ -169,4 +92,5 @@ const Services7 = () => {
     </>
   );
 };
+
 export default Services7;

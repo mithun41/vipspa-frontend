@@ -12,7 +12,6 @@ const Team2 = ({ teamData }) => {
         <div className="team2-2 bounce-y"></div>
         <div className="leaf4 bounce-x"></div>
         <div className="auto-container">
-          
           {/* Section Title */}
           <div className="sec-title text-center">
             <figure className="image">
@@ -33,13 +32,13 @@ const Team2 = ({ teamData }) => {
                       <div className="info-box">
                         <h3 className="name">
                           {/* Profile details page thakle member.id pass kora jay */}
-                          <Link href={`/page-team-details`}>
-                            {member.name}
-                          </Link>
+                          <Link href={`/page-team-details`}>{member.name}</Link>
                         </h3>
-                        <span className="designation">{member.designation}</span>
+                        <span className="designation">
+                          {member.designation}
+                        </span>
                       </div>
-                      cff
+
                       <Link className="icon" href={`/page-team-details`}>
                         <i className="fa-sharp fa-regular fa-arrow-up-right"></i>
                       </Link>
@@ -48,7 +47,7 @@ const Team2 = ({ teamData }) => {
                       <div
                         className="bg-image"
                         style={{
-                          backgroundImage: `url(${member.image || "/images/resource/1.png"})`,
+                          backgroundImage: `url(${member.photo || "/images/resource/1.png"})`,
                         }}
                       ></div>
                     </div>
