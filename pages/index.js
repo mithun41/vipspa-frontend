@@ -32,15 +32,15 @@ export default function Home() {
         <Clients1 />
         <About6 about={homeData?.about || []} />
         <Services1 servicesData={homeData?.services || []} />
-        <Marquee1 marqueeData={homeData?.marquee || []}/>
-        <Video1 videoData={homeData?.video || []}/>
-        <Gallery1 galleryData={homeData?.gallery || []}/>
-        <Pricing1 pricingData={homeData?.pricing || []}/>
+        <Marquee1 marqueeData={homeData?.marquee || []} />
+        <Video1 videoData={homeData?.video || []} />
+        <Gallery1 galleryData={homeData?.gallery || []} />
+        <Pricing1 pricingData={homeData?.pricing || []} />
         <Contact1 />
-        <Testimonial1 testimonialData={homeData?.testimonials || []}/>
-        <Team2 teamData={homeData?.team || []}/>
+        <Testimonial1 testimonialData={homeData?.testimonials || []} />
+        <Team2 teamData={homeData?.team || []} />
         <Instagram1 />
-        <Blog1 blogData={homeData?.blog || []}/>
+        <Blog1 blogData={homeData?.blog || []} />
       </Layout>
     </>
   );

@@ -9,21 +9,21 @@ import Funfact from "@/components/sections/Funfact3";
 import { useEffect, useState } from "react";
 
 export default function PagePricing() {
-   const [homeData, setHomeData] = useState(null);
-    const [loading, setLoading] = useState(true); 
-  
-    useEffect(() => {
-      fetch("http://127.0.0.1:8000/api/vipspa/homepage/")
-        .then((res) => res.json())
-        .then((data) => {
-          setHomeData(data);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error("Fetch error:", err);
-          setLoading(false);
-        });
-    }, []);
+  const [homeData, setHomeData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/vipspa/homepage/")
+      .then((res) => res.json())
+      .then((data) => {
+        setHomeData(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Fetch error:", err);
+        setLoading(false);
+      });
+  }, []);
   return (
     <>
       <Layout headerStyle={2} footerStyle={2}>

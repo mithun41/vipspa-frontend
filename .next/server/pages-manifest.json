@@ -2,10 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/": "pages/index.js",
-  "/admin/settings": "pages/admin/settings.js",
-  "/page-contact": "pages/page-contact.js",
-  "/page-pricing": "pages/page-pricing.js",
-  "/page-services": "pages/page-services.js",
-  "/page-about": "pages/page-about.js"
+  "/": "pages/index.js"
 }

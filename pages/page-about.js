@@ -29,14 +29,14 @@ export default function PageAbout() {
     <>
       <Layout headerStyle={2} footerStyle={2}>
         <PageTitle pageName="About Us" />
-        <About1 aboutData={homeData?.about || {}} /> 
-        
+        <About1 aboutData={homeData?.about || {}} />
+
         <Clients8 />
 
         <Video1 videoData={homeData?.video || {}} />
 
         <Pricing1 pricingData={homeData?.pricing || {}} />
-        
+
         <Contact1 />
 
         <Testimonial1 testimonialData={homeData?.testimonials || {}} />

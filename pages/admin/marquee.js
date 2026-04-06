@@ -10,7 +10,9 @@ const ManageMarquee = () => {
   const [formData, setFormData] = useState(initialFormState);
   const [isEditing, setIsEditing] = useState(false);
 
-  useEffect(() => { fetchMarqueeData(); }, []);
+  useEffect(() => {
+    fetchMarqueeData();
+  }, []);
 
   // 1. Fetch Marquee Items
   const fetchMarqueeData = async () => {
@@ -39,13 +41,13 @@ const ManageMarquee = () => {
     try {
       const res = await fetch(url, {
         method: isEditing ? "PUT" : "POST",
-        headers: { 
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           text: formData.text,
-          order: formData.order
+          order: formData.order,
         }),
       });
 
@@ -66,10 +68,13 @@ const ManageMarquee = () => {
     if (!confirm("Are you sure?")) return;
     const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/vipspa/marquee-items/${id}/`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/vipspa/marquee-items/${id}/`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (res.ok) {
         alert("Deleted!");
         fetchMarqueeData();
@@ -96,34 +101,54 @@ const ManageMarquee = () => {
         <div className="row">
           {/* Form Side */}
           <div className="col-md-4">
-            <div className="card shadow-sm border-0 p-4 sticky-top" style={{ top: "20px" }}>
-              <h5 className="fw-bold mb-3">{isEditing ? "📝 Edit Marquee Text" : "➕ Add Marquee Text"}</h5>
+            <div
+              className="card shadow-sm border-0 p-4 sticky-top"
+              style={{ top: "20px" }}
+            >
+              <h5 className="fw-bold mb-3">
+                {isEditing ? "📝 Edit Marquee Text" : "➕ Add Marquee Text"}
+              </h5>
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="small fw-bold text-uppercase text-muted">Scrolling Text</label>
-                  <input 
-                    type="text" 
-                    className="form-control" 
+                  <label className="small fw-bold text-uppercase text-muted">
+                    Scrolling Text
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
                     placeholder="e.g. Relaxation"
-                    value={formData.text} 
-                    onChange={e => setFormData({...formData, text: e.target.value})} 
-                    required 
+                    value={formData.text}
+                    onChange={(e) =>
+                      setFormData({ ...formData, text: e.target.value })
+                    }
+                    required
                   />
                 </div>
                 <div className="mb-3">
-                  <label className="small fw-bold text-uppercase text-muted">Order</label>
-                  <input 
-                    type="number" 
-                    className="form-control" 
-                    value={formData.order} 
-                    onChange={e => setFormData({...formData, order: e.target.value})} 
+                  <label className="small fw-bold text-uppercase text-muted">
+                    Order
+                  </label>
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={formData.order}
+                    onChange={(e) =>
+                      setFormData({ ...formData, order: e.target.value })
+                    }
                   />
                 </div>
-                <button type="submit" className={`btn w-100 fw-bold ${isEditing ? "btn-primary" : "btn-success"}`}>
-                   {isEditing ? "Update Item" : "Save Item"}
+                <button
+                  type="submit"
+                  className={`btn w-100 fw-bold ${isEditing ? "btn-primary" : "btn-success"}`}
+                >
+                  {isEditing ? "Update Item" : "Save Item"}
                 </button>
                 {isEditing && (
-                  <button type="button" className="btn btn-link w-100 text-danger mt-1 text-decoration-none" onClick={resetForm}>
+                  <button
+                    type="button"
+                    className="btn btn-link w-100 text-danger mt-1 text-decoration-none"
+                    onClick={resetForm}
+                  >
                     Cancel
                   </button>
                 )}
@@ -144,22 +169,42 @@ const ManageMarquee = () => {
                 </thead>
                 <tbody>
                   {loading ? (
-                    <tr><td colSpan="3" className="text-center py-5">Loading...</td></tr>
+                    <tr>
+                      <td colSpan="3" className="text-center py-5">
+                        Loading...
+                      </td>
+                    </tr>
                   ) : items.length > 0 ? (
                     items.map((item) => (
                       <tr key={item.id}>
                         <td className="px-4">
-                          <span className="fw-bold text-primary">{item.text}</span>
+                          <span className="fw-bold text-primary">
+                            {item.text}
+                          </span>
                         </td>
                         <td>{item.order}</td>
                         <td className="text-end px-4">
-                          <button onClick={() => handleEditClick(item)} className="btn btn-sm btn-outline-primary me-2">Edit</button>
-                          <button onClick={() => handleDelete(item.id)} className="btn btn-sm btn-outline-danger">Delete</button>
+                          <button
+                            onClick={() => handleEditClick(item)}
+                            className="btn btn-sm btn-outline-primary me-2"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => handleDelete(item.id)}
+                            className="btn btn-sm btn-outline-danger"
+                          >
+                            Delete
+                          </button>
                         </td>
                       </tr>
                     ))
                   ) : (
-                    <tr><td colSpan="3" className="text-center py-5 text-muted">No marquee items found.</td></tr>
+                    <tr>
+                      <td colSpan="3" className="text-center py-5 text-muted">
+                        No marquee items found.
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

@@ -19,7 +19,9 @@ const ManageTeam = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
 
-  useEffect(() => { fetchTeam(); }, []);
+  useEffect(() => {
+    fetchTeam();
+  }, []);
 
   const fetchTeam = async () => {
     try {
@@ -58,7 +60,7 @@ const ManageTeam = () => {
     try {
       const res = await fetch(url, {
         method: method,
-        headers: { "Authorization": `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}` },
         body: data,
       });
 
@@ -79,12 +81,19 @@ const ManageTeam = () => {
     if (!confirm("Remove this team member?")) return;
     const token = localStorage.getItem("adminToken");
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/vipspa/team-members/${id}/`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
-      if (res.ok) { fetchTeam(); }
-    } catch (err) { alert("Delete failed!"); }
+      const res = await fetch(
+        `http://127.0.0.1:8000/api/vipspa/team-members/${id}/`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      if (res.ok) {
+        fetchTeam();
+      }
+    } catch (err) {
+      alert("Delete failed!");
+    }
   };
 
   const handleEditClick = (item) => {
@@ -113,35 +122,91 @@ const ManageTeam = () => {
         <div className="row">
           {/* Form Section */}
           <div className="col-md-4">
-            <div className="card shadow-sm border-0 p-4 sticky-top" style={{ top: "20px" }}>
+            <div
+              className="card shadow-sm border-0 p-4 sticky-top"
+              style={{ top: "20px" }}
+            >
               <h5 className="fw-bold mb-4 text-primary border-bottom pb-2">
                 {isEditing ? "Edit Member" : "Add Team Member"}
               </h5>
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
                   <label className="small fw-bold">Full Name</label>
-                  <input type="text" className="form-control" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} required />
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({ ...formData, name: e.target.value })
+                    }
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className="small fw-bold">Designation</label>
-                  <input type="text" className="form-control" placeholder="e.g. Massage Therapist" value={formData.designation} onChange={e => setFormData({...formData, designation: e.target.value})} required />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="e.g. Massage Therapist"
+                    value={formData.designation}
+                    onChange={(e) =>
+                      setFormData({ ...formData, designation: e.target.value })
+                    }
+                    required
+                  />
                 </div>
                 <div className="mb-3">
                   <label className="small fw-bold">Order (Position)</label>
-                  <input type="number" className="form-control" value={formData.order} onChange={e => setFormData({...formData, order: e.target.value})} />
+                  <input
+                    type="number"
+                    className="form-control"
+                    value={formData.order}
+                    onChange={(e) =>
+                      setFormData({ ...formData, order: e.target.value })
+                    }
+                  />
                 </div>
                 <div className="mb-4">
                   <label className="small fw-bold">Photo</label>
-                  <input type="file" className="form-control mb-2" onChange={e => {
-                    const file = e.target.files[0];
-                    if(file) { setFormData({...formData, photo: file}); setPreview(URL.createObjectURL(file)); }
-                  }} />
-                  {preview && <img src={preview} className="rounded border" style={{height: "80px", width: "80px", objectFit: "cover"}} alt="preview" />}
+                  <input
+                    type="file"
+                    className="form-control mb-2"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setFormData({ ...formData, photo: file });
+                        setPreview(URL.createObjectURL(file));
+                      }
+                    }}
+                  />
+                  {preview && (
+                    <img
+                      src={preview}
+                      className="rounded border"
+                      style={{
+                        height: "80px",
+                        width: "80px",
+                        objectFit: "cover",
+                      }}
+                      alt="preview"
+                    />
+                  )}
                 </div>
-                <button type="submit" className={`btn w-100 fw-bold ${isEditing ? "btn-primary" : "btn-success"}`}>
-                   {isEditing ? "UPDATE MEMBER" : "ADD MEMBER"}
+                <button
+                  type="submit"
+                  className={`btn w-100 fw-bold ${isEditing ? "btn-primary" : "btn-success"}`}
+                >
+                  {isEditing ? "UPDATE MEMBER" : "ADD MEMBER"}
                 </button>
-                {isEditing && <button type="button" className="btn btn-link w-100 mt-2 text-muted" onClick={resetForm}>Cancel</button>}
+                {isEditing && (
+                  <button
+                    type="button"
+                    className="btn btn-link w-100 mt-2 text-muted"
+                    onClick={resetForm}
+                  >
+                    Cancel
+                  </button>
+                )}
               </form>
             </div>
           </div>
@@ -160,27 +225,58 @@ const ManageTeam = () => {
                   </thead>
                   <tbody>
                     {loading ? (
-                      <tr><td colSpan="3" className="text-center py-5">Loading...</td></tr>
+                      <tr>
+                        <td colSpan="3" className="text-center py-5">
+                          Loading...
+                        </td>
+                      </tr>
                     ) : items.length > 0 ? (
                       items.map((item) => (
                         <tr key={item.id}>
                           <td className="px-4">
                             <div className="d-flex align-items-center gap-3">
-                              <img src={item.photo} className="rounded border" style={{ width: "45px", height: "45px", objectFit: "cover" }} alt="" />
+                              <img
+                                src={item.photo}
+                                className="rounded border"
+                                style={{
+                                  width: "45px",
+                                  height: "45px",
+                                  objectFit: "cover",
+                                }}
+                                alt=""
+                              />
                               <div className="fw-bold">{item.name}</div>
                             </div>
                           </td>
-                          <td><span className="badge bg-light text-dark border">{item.designation}</span></td>
+                          <td>
+                            <span className="badge bg-light text-dark border">
+                              {item.designation}
+                            </span>
+                          </td>
                           <td className="text-end px-4">
                             <div className="btn-group">
-                              <button onClick={() => handleEditClick(item)} className="btn btn-sm btn-outline-primary">Edit</button>
-                              <button onClick={() => handleDelete(item.id)} className="btn btn-sm btn-outline-danger">Delete</button>
+                              <button
+                                onClick={() => handleEditClick(item)}
+                                className="btn btn-sm btn-outline-primary"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDelete(item.id)}
+                                className="btn btn-sm btn-outline-danger"
+                              >
+                                Delete
+                              </button>
                             </div>
                           </td>
                         </tr>
                       ))
                     ) : (
-                      <tr><td colSpan="3" className="text-center py-5 text-muted">No team members found.</td></tr>
+                      <tr>
+                        <td colSpan="3" className="text-center py-5 text-muted">
+                          No team members found.
+                        </td>
+                      </tr>
                     )}
                   </tbody>
                 </table>

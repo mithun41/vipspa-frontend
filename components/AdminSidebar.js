@@ -1,158 +1,252 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation"; // রাউটার ইম্পোর্ট করলাম
+import { useState, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function AdminSidebar() {
-  const [openMenu, setOpenMenu] = useState("home");
-  const router = useRouter(); // রাউটার ইনিশিয়ালাইজ
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const toggleMenu = (menuName) => {
-    setOpenMenu(openMenu === menuName ? "" : menuName);
+  const getDefaultMenu = () => {
+    if (
+      [
+        "/admin/hero",
+        "/admin/marquee",
+        "/admin/video",
+        "/admin/testimonials",
+        "/admin/team",
+        "/admin/services",
+        "/admin/pricing",
+        "/admin/manageGallery", // এখানে অ্যাড করা হয়েছে
+      ].includes(pathname)
+    ) {
+      return "home";
+    }
+
+    if (
+      [
+        "/admin/blogpage/blogpage",
+        "/admin/blogpage/categories",
+        "/admin/blogpage/comments",
+      ].includes(pathname)
+    ) {
+      return "blog";
+    }
+
+    if (pathname === "/admin/about") return "about";
+    if (pathname === "/admin/services/servicepage") return "service";
+
+    return "";
   };
 
-  // লগআউট ফাংশন
+  const [openMenu, setOpenMenu] = useState("");
+
+  useEffect(() => {
+    setOpenMenu(getDefaultMenu());
+  }, [pathname]);
+
+  const toggleMenu = (menuName) => {
+    setOpenMenu((prev) => (prev === menuName ? "" : menuName));
+  };
+
   const handleLogout = () => {
-    if (confirm("মামা, লগআউট করবেন?")) {
-      localStorage.removeItem("adminToken"); // টোকেন রিমুভ
-      router.push("/login"); // লগইন পেজে রিডাইরেক্ট
+    if (confirm("Want to logout?")) {
+      localStorage.removeItem("adminToken");
+      router.push("/admin/login");
     }
   };
 
-  const navLinkStyle = {
+  const isActive = (href) => pathname === href;
+
+  const navLinkStyle = (active = false) => ({
     display: "flex",
     alignItems: "center",
     padding: "12px 20px",
-    color: "#adb5bd",
+    color: active ? "#ffc107" : "#adb5bd",
     textDecoration: "none",
-    transition: "0.3s",
+    transition: "all 0.3s ease",
     fontSize: "15px",
-    borderLeft: "3px solid transparent",
-  };
+    borderLeft: active ? "3px solid #ffc107" : "3px solid transparent",
+    background: active ? "#0f3460" : "transparent",
+    cursor: "pointer",
+  });
 
-  const subLinkStyle = {
-    ...navLinkStyle,
+  const subLinkStyle = (active = false) => ({
+    ...navLinkStyle(active),
     paddingLeft: "45px",
     fontSize: "14px",
-    background: "#16213e",
+    background: active ? "#0f3460" : "#16213e",
+    color: active ? "#ffc107" : "#adb5bd",
     borderBottom: "1px solid #1a1a2e",
+  });
+
+  const renderDropdown = (key, icon, title, items) => {
+    const isOpen = openMenu === key;
+    const hasActiveChild = items.some((item) => pathname === item.href);
+
+    return (
+      <li className="nav-item">
+        <div
+          style={navLinkStyle(isOpen || hasActiveChild)}
+          onClick={() => toggleMenu(key)}
+        >
+          <span className="me-2">{icon}</span> {title}
+          <span className="ms-auto" style={{ fontSize: "10px" }}>
+            {isOpen ? "▼" : "▶"}
+          </span>
+        </div>
+
+        {isOpen && (
+          <div>
+            {items.map((item, index) => (
+              <Link
+                key={index}
+                href={item.href}
+                style={subLinkStyle(isActive(item.href))}
+                className="sub-hover"
+              >
+                {item.icon} {item.label}
+              </Link>
+            ))}
+          </div>
+        )}
+      </li>
+    );
   };
 
   return (
-    <aside
-      style={{
-        width: "260px",
-        background: "#1a1a2e",
-        color: "white",
-        minHeight: "100vh",
-        padding: "20px 0",
-        display: "flex",
-        flexDirection: "column", // কন্টেন্ট সাজানোর জন্য
-      }}
-    >
-      <div style={{ flex: 1 }}> {/* মেনুগুলো উপরে রাখার জন্য */}
-        <div className="px-4 mb-4 text-center">
-          <h4 className="text-warning fw-bold" style={{ letterSpacing: "1px" }}>
-            VIP SPA ADMIN
-          </h4>
-          <div style={{ fontSize: "10px", color: "#6c757d" }}>
-            MANAGEMENT PANEL
-          </div>
+    <aside className="admin-sidebar">
+      <div style={{ flex: 1 }}>
+        <div className="sidebar-header">
+          <h4>VIP SPA ADMIN</h4>
+          <div className="sub-title">MANAGEMENT PANEL</div>
         </div>
 
         <ul className="nav flex-column">
-          {/* 🏠 DASHBOARD */}
+          {/* Dashboard */}
           <li className="nav-item">
-            <Link href="/admin" style={navLinkStyle} className="hover-link">
+            <Link
+              href="/admin"
+              style={navLinkStyle(isActive("/admin"))}
+              className="hover-link"
+            >
               <span className="me-2">🏠</span> Dashboard
             </Link>
           </li>
 
-          {/* 🌐 HOMEPAGE */}
-          <li className="nav-item">
-            <div
-              style={{
-                ...navLinkStyle,
-                cursor: "pointer",
-                color: openMenu === "home" ? "#ffc107" : "#adb5bd",
-              }}
-              onClick={() => toggleMenu("home")}
-            >
-              <span className="me-2">🌐</span> Homepage
-              <span className="ms-auto" style={{ fontSize: "10px" }}>
-                {openMenu === "home" ? "▼" : "▶"}
-              </span>
-            </div>
+          {/* Homepage */}
+          {renderDropdown("home", "🌐", "Homepage", [
+            { href: "/admin/hero", icon: "🖼️", label: "Hero Slides" },
+            { href: "/admin/marquee", icon: "⚡", label: "Marquee Text" },
+            { href: "/admin/video", icon: "🎥", label: "Video Section" },
+            { href: "/admin/testimonials", icon: "💬", label: "Testimonials" },
+            { href: "/admin/team", icon: "👥", label: "Team Members" },
+            { href: "/admin/services", icon: "🛠️", label: "Services" },
+            { href: "/admin/pricing", icon: "💰", label: "Pricing Plans" },
+            {
+              href: "/admin/manageGallery",
+              icon: "📸",
+              label: "Manage Gallery",
+            }, // এখানে অ্যাড করা হয়েছে
+          ])}
 
-            {openMenu === "home" && (
-              <div className="sub-menu-container">
-                <Link href="/admin/hero" style={subLinkStyle} className="sub-hover">🖼️ Hero Slides</Link>
-                <Link href="/admin/marquee" style={subLinkStyle} className="sub-hover">⚡ Marquee Text</Link>
-                <Link href="/admin/video" style={subLinkStyle} className="sub-hover">🎥 Video Section</Link>
-                <Link href="/admin/testimonials" style={subLinkStyle} className="sub-hover">💬 Testimonials</Link>
-                <Link href="/admin/team" style={subLinkStyle} className="sub-hover">👥 Team Members</Link>
-                <Link href="/admin/blogs" style={subLinkStyle} className="sub-hover">✍️ Blog Posts</Link>
-                <Link href="/admin/services" style={subLinkStyle} className="sub-hover">🛠️ Services (Section 3/7)</Link>
-                <Link href="/admin/pricing" style={subLinkStyle} className="sub-hover">💰 Pricing Plans</Link>
-              </div>
-            )}
-          </li>
+          {/* Blog */}
+          {renderDropdown("blog", "✍️", "Blog Page", [
+            {
+              href: "/admin/blogpage/blogpage",
+              icon: "📰",
+              label: "All Blog Posts",
+            },
+            {
+              href: "/admin/blogpage/categories",
+              icon: "📂",
+              label: "Categories",
+            },
+            {
+              href: "/admin/blogpage/comments",
+              icon: "💬",
+              label: "Comments",
+            },
+          ])}
 
-          {/* 📄 ABOUT PAGE */}
-          <li className="nav-item">
-            <div style={{ ...navLinkStyle, cursor: "pointer" }} onClick={() => toggleMenu("about")}>
-              <span className="me-2">📖</span> About Page
-              <span className="ms-auto" style={{ fontSize: "10px" }}>{openMenu === "about" ? "▼" : "▶"}</span>
-            </div>
-            {openMenu === "about" && (
-              <Link href="/admin/about" style={subLinkStyle} className="sub-hover">📝 About Content</Link>
-            )}
-          </li>
+          {/* About */}
+          {renderDropdown("about", "📖", "About Page", [
+            { href: "/admin/about", icon: "📝", label: "About Content" },
+          ])}
 
-          {/* 📖 SERVICE PAGE */}
-          <li className="nav-item">
-            <div style={{ ...navLinkStyle, cursor: "pointer" }} onClick={() => toggleMenu("service")}>
-              <span className="me-2">📖</span> Service Page
-              <span className="ms-auto" style={{ fontSize: "10px" }}>{openMenu === "service" ? "▼" : "▶"}</span>
-            </div>
-            {openMenu === "service" && (
-              <Link href="/admin/services/servicepage" style={subLinkStyle} className="sub-hover">Service Management</Link>
-            )}
-          </li>
+          {/* Service */}
+          {renderDropdown("service", "🛁", "Service Page", [
+            {
+              href: "/admin/services/servicepage",
+              icon: "🛠️",
+              label: "Service Management",
+            },
+          ])}
 
-          {/* ⚙️ SITE CONFIG */}
+          {/* Settings */}
           <li className="nav-item mt-3">
-            <Link href="/admin/settings" style={navLinkStyle} className="hover-link">
+            <Link
+              href="/admin/settings"
+              style={navLinkStyle(isActive("/admin/settings"))}
+            >
               <span className="me-2">⚙️</span> Site Settings
             </Link>
           </li>
         </ul>
       </div>
 
-      {/* 🚪 LOGOUT BUTTON (একেবারে নিচে) */}
-      <div className="px-3 mt-auto pt-3 border-top border-secondary">
-        <button 
-          onClick={handleLogout}
-          className="btn btn-outline-danger w-100 fw-bold d-flex align-items-center justify-content-center gap-2"
-          style={{ padding: "10px", borderRadius: "8px", transition: "0.3s" }}
-        >
-          <span>🚪</span> Logout
+      <div className="logout-wrap">
+        <button onClick={handleLogout} className="logout-btn">
+          🚪 Logout
         </button>
       </div>
 
       <style jsx>{`
-        .hover-link:hover {
-          background: #0f3460;
-          color: white !important;
-          border-left: 3px solid #ffc107;
+        .admin-sidebar {
+          width: 260px;
+          background: #1a1a2e;
+          color: white;
+          min-height: 100vh;
+          padding: 20px 0;
+          display: flex;
+          flex-direction: column;
         }
-        .sub-hover:hover {
-          background: #1a1a2e !important;
-          color: #ffc107 !important;
-          padding-left: 50px !important;
+
+        .sidebar-header {
+          padding: 0 20px 20px;
+          text-align: center;
         }
-        .nav-item {
-          transition: all 0.3s;
+
+        .sidebar-header h4 {
+          color: #ffc107;
+          font-weight: 700;
+          letter-spacing: 1px;
+          margin-bottom: 4px;
+        }
+
+        .sub-title {
+          font-size: 10px;
+          color: #6c757d;
+        }
+
+        .logout-wrap {
+          padding: 16px;
+          border-top: 1px solid #2b2b45;
+        }
+
+        .logout-btn {
+          width: 100%;
+          padding: 10px;
+          border-radius: 8px;
+          border: 1px solid #dc3545;
+          background: transparent;
+          color: white;
+          font-weight: 700;
+          cursor: pointer;
+        }
+
+        .logout-btn:hover {
+          background: #dc3545;
         }
       `}</style>
     </aside>
