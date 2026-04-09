@@ -27,9 +27,7 @@ const ManageTestimonials = () => {
   // ১. ফেচ করার সময় সঠিক এপিআই ইউআরএল ব্যবহার
   const fetchTestimonials = async () => {
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
-      );
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/homepage/");
       const data = await res.json();
       // আপনার রাউটার অনুযায়ী ডাটা কি testimonials এ আসছে নাকি অন্য কিছুতে সেটা চেক করুন
       if (data.testimonials && data.testimonials.items) {
@@ -64,8 +62,7 @@ const ManageTestimonials = () => {
       return;
     }
 
-    const baseUrl =
-      "https://vipspa.pythonanywhere.com//api/vipspa/testimonials/";
+    const baseUrl = "http://127.0.0.1:8000//api/vipspa/testimonials/";
     const url = isEditing ? `${baseUrl}${formData.id}/` : baseUrl;
     const method = isEditing ? "PATCH" : "POST";
 
@@ -100,7 +97,7 @@ const ManageTestimonials = () => {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure?")) return;
     const token = localStorage.getItem("adminToken");
-    const url = `https://vipspa.pythonanywhere.com//api/vipspa/testimonials/${id}/`;
+    const url = `http://127.0.0.1:8000//api/vipspa/testimonials/${id}/`;
 
     try {
       const res = await fetch(url, {

@@ -13,7 +13,7 @@ export default function PagePricing() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("https://vipspa.pythonanywhere.com//api/vipspa/homepage/")
+    fetch("http://127.0.0.1:8000//api/vipspa/homepage/")
       .then((res) => res.json())
       .then((data) => {
         setHomeData(data);

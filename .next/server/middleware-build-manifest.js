@@ -24,10 +24,15 @@ self.__BUILD_MANIFEST = {
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin/new-section": [
+    "/admin/services/servicepage": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/admin/new-section.js"
+      "static/chunks/pages/admin/services/servicepage.js"
+    ],
+    "/page-services": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/page-services.js"
     ]
   },
   "ampFirstPages": []

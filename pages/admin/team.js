@@ -25,9 +25,7 @@ const ManageTeam = () => {
 
   const fetchTeam = async () => {
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
-      );
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/homepage/");
       const data = await res.json();
       // আপনার JSON স্ট্রাকচার অনুযায়ী ডাটা সেট করা
       if (data.team && data.team.items) {
@@ -55,8 +53,7 @@ const ManageTeam = () => {
       data.append("photo", formData.photo);
     }
 
-    const baseUrl =
-      "https://vipspa.pythonanywhere.com//api/vipspa/team-members/";
+    const baseUrl = "http://127.0.0.1:8000//api/vipspa/team-members/";
     const url = isEditing ? `${baseUrl}${formData.id}/` : baseUrl;
     const method = isEditing ? "PATCH" : "POST";
 
@@ -85,7 +82,7 @@ const ManageTeam = () => {
     const token = localStorage.getItem("adminToken");
     try {
       const res = await fetch(
-        `https://vipspa.pythonanywhere.com//api/vipspa/team-members/${id}/`,
+        `http://127.0.0.1:8000//api/vipspa/team-members/${id}/`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

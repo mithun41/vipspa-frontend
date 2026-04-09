@@ -30,9 +30,7 @@ const ManageHero = () => {
   // 1. Fetch Hero Slides
   const fetchHeroData = async () => {
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
-      );
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/homepage/");
       const data = await res.json();
       if (data.hero && data.hero.slides) {
         setSlides(data.hero.slides);
@@ -57,8 +55,8 @@ const ManageHero = () => {
     });
 
     const url = isEditing
-      ? `https://vipspa.pythonanywhere.com//api/vipspa/hero-slides/${formData.id}/`
-      : `https://vipspa.pythonanywhere.com//api/vipspa/hero-slides/`;
+      ? `http://127.0.0.1:8000//api/vipspa/hero-slides/${formData.id}/`
+      : `http://127.0.0.1:8000//api/vipspa/hero-slides/`;
 
     try {
       const res = await fetch(url, {
@@ -85,7 +83,7 @@ const ManageHero = () => {
     const token = localStorage.getItem("adminToken");
     try {
       const res = await fetch(
-        `https://vipspa.pythonanywhere.com//api/vipspa/hero-slides/${id}/`,
+        `http://127.0.0.1:8000//api/vipspa/hero-slides/${id}/`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

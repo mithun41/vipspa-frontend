@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/admin/services": "pages/admin/services.js",
   "/": "pages/index.js",
-  "/admin/new-section": "pages/admin/new-section.js"
+  "/page-services": "pages/page-services.js",
+  "/admin/services/servicepage": "pages/admin/services/servicepage.js"
 }

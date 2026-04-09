@@ -10,9 +10,7 @@ const ManageGallery = () => {
   // ১. ডাটা ফেচ করা (Read)
   const fetchPhotos = async () => {
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/gallery/",
-      );
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/gallery/");
       const data = await res.json();
       setPhotos(data);
     } catch (err) {
@@ -40,16 +38,13 @@ const ManageGallery = () => {
 
     setUploading(true);
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/gallery/",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/gallery/", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+        body: formData,
+      });
 
       if (res.ok) {
         alert("Photo uploaded!");
@@ -80,7 +75,7 @@ const ManageGallery = () => {
 
     try {
       const res = await fetch(
-        `https://vipspa.pythonanywhere.com//api/vipspa/gallery/${id}/`,
+        `http://127.0.0.1:8000//api/vipspa/gallery/${id}/`,
         {
           method: "DELETE",
           headers: {

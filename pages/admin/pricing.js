@@ -28,7 +28,7 @@ const ManagePricing = () => {
   const fetchPlans = async () => {
     try {
       const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/pricing-plans/",
+        "http://127.0.0.1:8000//api/vipspa/pricing-plans/",
       );
       const data = await res.json();
       setPlans(data);
@@ -47,8 +47,8 @@ const ManagePricing = () => {
     // যদি এডিট হয় তবে PUT, নতুন হলে POST
     const method = isEditing ? "PUT" : "POST";
     const url = isEditing
-      ? `https://vipspa.pythonanywhere.com//api/vipspa/pricing-plans/${formData.id}/`
-      : `https://vipspa.pythonanywhere.com//api/vipspa/pricing-plans/`;
+      ? `http://127.0.0.1:8000//api/vipspa/pricing-plans/${formData.id}/`
+      : `http://127.0.0.1:8000//api/vipspa/pricing-plans/`;
 
     try {
       const res = await fetch(url, {
@@ -79,7 +79,7 @@ const ManagePricing = () => {
     const token = localStorage.getItem("adminToken");
 
     const res = await fetch(
-      `https://vipspa.pythonanywhere.com//api/vipspa/pricing-plans/${id}/`,
+      `http://127.0.0.1:8000//api/vipspa/pricing-plans/${id}/`,
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },

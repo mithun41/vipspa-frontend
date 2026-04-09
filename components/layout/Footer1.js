@@ -6,7 +6,7 @@ export default function Footer1() {
   const [config, setConfig] = useState(null);
 
   useEffect(() => {
-    fetch("https://vipspa.pythonanywhere.com//api/vipspa/site-config/")
+    fetch("http://127.0.0.1:8000//api/vipspa/site-config/")
       .then((res) => res.json())
       .then((data) => {
         // ModelViewSet অ্যারে রিটার্ন করে, তাই প্রথমটা নিচ্ছি

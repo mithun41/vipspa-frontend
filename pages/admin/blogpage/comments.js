@@ -14,7 +14,7 @@ export default function CommentPage() {
   const fetchComments = async () => {
     try {
       const res = await axios.get(
-        "https://vipspa.pythonanywhere.com//api/vipspa/comments/",
+        "http://127.0.0.1:8000//api/vipspa/comments/",
       );
       setComments(res.data);
       setLoading(false);
@@ -25,9 +25,7 @@ export default function CommentPage() {
 
   const handleDelete = async (id) => {
     if (confirm("মামা, এই কমেন্টটা কি আসলেই ডিলিট করবেন?")) {
-      await axios.delete(
-        `https://vipspa.pythonanywhere.com//api/vipspa/comments/${id}/`,
-      );
+      await axios.delete(`http://127.0.0.1:8000//api/vipspa/comments/${id}/`);
       fetchComments();
     }
   };

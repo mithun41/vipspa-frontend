@@ -12,7 +12,7 @@ const NewsGrid = () => {
       try {
         // আপনার জ্যাঙ্গো এপিআই ইউআরএল
         const response = await axios.get(
-          "https://vipspa.pythonanywhere.com//api/vipspa/blog-pages/",
+          "http://127.0.0.1:8000//api/vipspa/blog-pages/",
         );
         setBlogs(response.data);
         setLoading(false);

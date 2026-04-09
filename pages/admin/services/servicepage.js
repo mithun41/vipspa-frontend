@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import withAuth from "../../../components/withAuth";
 
-const BASE_URL = "https://vipspa.pythonanywhere.com//api/vipspa/services/";
+const BASE_URL = "https://vipspa.pythonanywhere.com/api/vipspa/service-items/";
 
 function ServiceAdmin() {
   const [services, setServices] = useState({
@@ -30,7 +30,7 @@ function ServiceAdmin() {
       const token = localStorage.getItem("adminToken"); // টোকেন নিন
 
       const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/services/",
+        "https://vipspa.pythonanywhere.com/api/vipspa/service-items/",
         {
           method: "GET",
           headers: {

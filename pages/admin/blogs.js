@@ -26,9 +26,7 @@ const ManageBlogs = () => {
 
   const fetchBlogData = async () => {
     try {
-      const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
-      );
+      const res = await fetch("http://127.0.0.1:8000//api/vipspa/homepage/");
       const data = await res.json();
       if (data.blog) {
         setPosts(data.blog.posts || []);
@@ -47,7 +45,7 @@ const ManageBlogs = () => {
     const token = localStorage.getItem("adminToken");
     try {
       const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/blog-sections/1/",
+        "http://127.0.0.1:8000//api/vipspa/blog-sections/1/",
         {
           // ধরে নিচ্ছি ID ১
           method: "PATCH",
@@ -80,7 +78,7 @@ const ManageBlogs = () => {
       data.append("image", formData.image);
     }
 
-    const baseUrl = "https://vipspa.pythonanywhere.com//api/vipspa/blog-posts/";
+    const baseUrl = "http://127.0.0.1:8000//api/vipspa/blog-posts/";
     const url = isEditing ? `${baseUrl}${formData.id}/` : baseUrl;
     const method = isEditing ? "PATCH" : "POST";
 
@@ -106,7 +104,7 @@ const ManageBlogs = () => {
     const token = localStorage.getItem("adminToken");
     try {
       const res = await fetch(
-        `https://vipspa.pythonanywhere.com//api/vipspa/blog-posts/${id}/`,
+        `http://127.0.0.1:8000//api/vipspa/blog-posts/${id}/`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

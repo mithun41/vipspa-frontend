@@ -12,7 +12,7 @@ const Services = () => {
   });
 
   useEffect(() => {
-    fetch("https://vipspa.pythonanywhere.com//api/vipspa/services/")
+    fetch("https://vipspa.pythonanywhere.com/api/vipspa/service-items/")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
