@@ -8,7 +8,9 @@ const Gallery = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:8000/api/vipspa/gallery/");
+        const res = await fetch(
+          "https://vipspa.pythonanywhere.com//api/vipspa/gallery/",
+        );
         const data = await res.json();
         setPhotos(Array.isArray(data) ? data : []);
       } catch (err) {

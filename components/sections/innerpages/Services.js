@@ -12,7 +12,7 @@ const Services = () => {
   });
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/vipspa/services/")
+    fetch("https://vipspa.pythonanywhere.com//api/vipspa/services/")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {

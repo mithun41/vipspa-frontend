@@ -17,7 +17,9 @@ const ManageMarquee = () => {
   // 1. Fetch Marquee Items
   const fetchMarqueeData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/homepage/");
+      const res = await fetch(
+        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
+      );
       const data = await res.json();
       if (data.marquee && data.marquee.items) {
         setItems(data.marquee.items);
@@ -35,8 +37,8 @@ const ManageMarquee = () => {
     const token = localStorage.getItem("adminToken");
 
     const url = isEditing
-      ? `http://127.0.0.1:8000/api/vipspa/marquee-items/${formData.id}/`
-      : `http://127.0.0.1:8000/api/vipspa/marquee-items/`;
+      ? `https://vipspa.pythonanywhere.com//api/vipspa/marquee-items/${formData.id}/`
+      : `https://vipspa.pythonanywhere.com//api/vipspa/marquee-items/`;
 
     try {
       const res = await fetch(url, {
@@ -69,7 +71,7 @@ const ManageMarquee = () => {
     const token = localStorage.getItem("adminToken");
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/vipspa/marquee-items/${id}/`,
+        `https://vipspa.pythonanywhere.com//api/vipspa/marquee-items/${id}/`,
         {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },

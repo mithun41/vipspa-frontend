@@ -33,7 +33,9 @@ const ManageAbout = () => {
   // 1. Fetch Data
   const fetchAboutData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/homepage/");
+      const res = await fetch(
+        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
+      );
       const data = await res.json();
 
       if (data.about) {
@@ -91,7 +93,7 @@ const ManageAbout = () => {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/vipspa/about-sections/${formData.id}/`,
+        `https://vipspa.pythonanywhere.com//api/vipspa/about-sections/${formData.id}/`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },

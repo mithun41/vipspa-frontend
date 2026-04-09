@@ -32,7 +32,9 @@ const AdminSettings = () => {
 
   const fetchSettings = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/site-config/");
+      const res = await fetch(
+        "https://vipspa.pythonanywhere.com//api/vipspa/site-config/",
+      );
       const data = await res.json();
       if (data && data.length > 0) {
         const currentData = data[0];
@@ -70,7 +72,8 @@ const AdminSettings = () => {
       }
     });
 
-    const baseUrl = "http://127.0.0.1:8000/api/vipspa/site-config/";
+    const baseUrl =
+      "https://vipspa.pythonanywhere.com//api/vipspa/site-config/";
     const url = formData.id ? `${baseUrl}${formData.id}/` : baseUrl;
     const method = formData.id ? "PATCH" : "POST";
 

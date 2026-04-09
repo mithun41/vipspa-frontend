@@ -23,25 +23,30 @@ const Services1 = ({ servicesData }) => {
   return (
     <section className="services-section pt-0">
       <div className="service1-pattrn1 bounce-y"></div>
-      
+
       <div className="auto-container">
         <div className="outer-box">
-          
           {/* Section Header */}
           <div className="sec-title">
             <div className="row">
               <div className="col-xl-6">
                 <figure className="image">
-                  <img src={sectionInfo?.icon_image || "/images/icons/icon1.png"} alt="Icon" />
+                  <img
+                    src={sectionInfo?.icon_image || "/images/icons/icon1.png"}
+                    alt="Icon"
+                  />
                 </figure>
-                <span className="sub-title">{sectionInfo?.subtitle || "Services list"}</span>
+                <span className="sub-title">
+                  {sectionInfo?.subtitle || "Services list"}
+                </span>
                 <h2 className="words-slide-up text-split">
                   {sectionInfo?.title || "Our Services Will Make You Glow"}
                 </h2>
               </div>
               <div className="col-xl-5 offset-xl-1">
                 <div className="text">
-                  {sectionInfo?.description || "Indulge in our rejuvenating treatments..."}
+                  {sectionInfo?.description ||
+                    "Indulge in our rejuvenating treatments..."}
                 </div>
               </div>
             </div>
@@ -64,13 +69,17 @@ const Services1 = ({ servicesData }) => {
                       </div>
                       <div className="content-box">
                         <figure className="icon mb-0">
-                          <img 
-                            src={item.icon || "/images/icons/theme-icon1.png"} 
-                            alt={item.title} 
+                          <img
+                            src={item.icon || "/images/icons/theme-icon1.png"}
+                            alt={item.title}
                           />
                         </figure>
                         <h4 className="title">
-                          <Link href={item.details_link || "#"}>{item.title}</Link>
+                          <Link
+                            href={item.details_link || "/page-service-details"}
+                          >
+                            {item.title}
+                          </Link>
                         </h4>
                       </div>
                     </div>
@@ -78,10 +87,11 @@ const Services1 = ({ servicesData }) => {
                 </SwiperSlide>
               ))
             ) : (
-              <p className="text-center">No services available. Please add from admin.</p>
+              <p className="text-center">
+                No services available. Please add from admin.
+              </p>
             )}
           </Swiper>
-
         </div>
       </div>
     </section>

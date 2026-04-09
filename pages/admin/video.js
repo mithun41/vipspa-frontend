@@ -22,7 +22,9 @@ const ManageVideoSection = () => {
   // 1. Fetch Data
   const fetchVideoData = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/homepage/");
+      const res = await fetch(
+        "https://vipspa.pythonanywhere.com//api/vipspa/homepage/",
+      );
       const data = await res.json();
 
       if (data.video) {
@@ -61,7 +63,7 @@ const ManageVideoSection = () => {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/vipspa/video-sections/${formData.id}/`,
+        `https://vipspa.pythonanywhere.com//api/vipspa/video-sections/${formData.id}/`,
         {
           method: "PATCH",
           headers: { Authorization: `Bearer ${token}` },

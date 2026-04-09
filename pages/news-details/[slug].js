@@ -25,11 +25,11 @@ const NewsDetails = () => {
     const fetchData = async () => {
       try {
         const blogRes = await axios.get(
-          `http://127.0.0.1:8000/api/vipspa/blog-pages/${slug}/`,
+          `https://vipspa.pythonanywhere.com//api/vipspa/blog-pages/${slug}/`,
         );
         setBlog(blogRes.data);
         const allRes = await axios.get(
-          "http://127.0.0.1:8000/api/vipspa/blog-pages/",
+          "https://vipspa.pythonanywhere.com//api/vipspa/blog-pages/",
         );
         setAllBlogs(allRes.data);
         setLoading(false);
@@ -45,16 +45,19 @@ const NewsDetails = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await axios.post(`http://127.0.0.1:8000/api/vipspa/comments/`, {
-        blog: blog.id,
-        name: commentData.name,
-        email: commentData.email,
-        message: commentData.comment,
-      });
+      await axios.post(
+        `https://vipspa.pythonanywhere.com//api/vipspa/comments/`,
+        {
+          blog: blog.id,
+          name: commentData.name,
+          email: commentData.email,
+          message: commentData.comment,
+        },
+      );
       alert("Comment submitted!");
       setCommentData({ name: "", email: "", comment: "" });
       const updated = await axios.get(
-        `http://127.0.0.1:8000/api/vipspa/blog-pages/${slug}/`,
+        `https://vipspa.pythonanywhere.com//api/vipspa/blog-pages/${slug}/`,
       );
       setBlog(updated.data);
     } catch (error) {

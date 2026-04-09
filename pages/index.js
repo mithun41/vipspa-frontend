@@ -6,6 +6,7 @@ import Banner1 from "@/components/sections/Banner3";
 import Blog1 from "@/components/sections/Blog2";
 import Clients1 from "@/components/sections/Clients1";
 import Contact1 from "@/components/sections/Contact1";
+import DynamicSection from "@/components/sections/DynamicSection";
 import Gallery1 from "@/components/sections/Gallery1";
 import Instagram1 from "@/components/sections/Instagram1";
 import Marquee1 from "@/components/sections/Marquee1";
@@ -19,7 +20,7 @@ export default function Home() {
   const [homeData, setHomeData] = useState(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/vipspa/homepage/")
+    fetch("https://vipspa.pythonanywhere.com//api/vipspa/homepage/")
       .then((res) => res.json())
       .then((data) => setHomeData(data))
       .catch((err) => console.error(err));
@@ -31,6 +32,9 @@ export default function Home() {
         <Banner1 slides={homeData?.hero?.slides || []} />
         <Clients1 />
         <About6 about={homeData?.about || []} />
+        {homeData?.home_sections?.items?.map((section) => (
+          <DynamicSection key={section.id} section={section} />
+        ))}
         <Services1 servicesData={homeData?.services || []} />
         <Marquee1 marqueeData={homeData?.marquee || []} />
         <Video1 videoData={homeData?.video || []} />

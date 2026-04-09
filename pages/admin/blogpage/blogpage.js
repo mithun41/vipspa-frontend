@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import withAuth from "@/components/withAuth";
+import axios from "axios";
 
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
@@ -9,6 +10,7 @@ const BlogManagement = () => {
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [status, setStatus] = useState({ type: "", msg: "" });
 
   const initialFormState = {
     id: null,
@@ -23,6 +25,11 @@ const BlogManagement = () => {
 
   const [formData, setFormData] = useState(initialFormState);
 
+  const showAlert = (type, msg) => {
+    setStatus({ type, msg });
+    setTimeout(() => setStatus({ type: "", msg: "" }), 4000);
+  };
+
   useEffect(() => {
     fetchBlogs();
     fetchCategories();
@@ -30,11 +37,12 @@ const BlogManagement = () => {
 
   const fetchBlogs = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/blog-pages/");
-      const data = await res.json();
-      setBlogs(data);
+      const res = await axios.get(
+        "https://vipspa.pythonanywhere.com/api/vipspa/blog-pages/",
+      );
+      setBlogs(res.data);
     } catch (err) {
-      console.error("Fetch Error:", err);
+      showAlert("danger", "Failed to load blogs.");
     } finally {
       setLoading(false);
     }
@@ -42,11 +50,12 @@ const BlogManagement = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/categories/");
-      const data = await res.json();
-      setCategories(data);
+      const res = await axios.get(
+        "https://vipspa.pythonanywhere.com/api/vipspa/categories/",
+      );
+      setCategories(res.data);
     } catch (err) {
-      console.error(err);
+      console.error("Category load error", err);
     }
   };
 
@@ -55,60 +64,60 @@ const BlogManagement = () => {
     const token = localStorage.getItem("adminToken");
     const data = new FormData();
 
-    data.append("title", formData.title);
-    data.append("content", formData.content);
-    data.append("category", formData.category);
-    data.append("author", formData.author);
-    data.append("tags", formData.tags || "");
+    Object.keys(formData).forEach((key) => {
+      if (key === "image" && !(formData[key] instanceof File)) return;
+      if (formData[key] !== null) data.append(key, formData[key]);
+    });
 
-    if (formData.image instanceof File) {
-      data.append("image", formData.image);
-    }
-
-    const baseUrl = "http://127.0.0.1:8000/api/vipspa/blog-pages/";
+    const baseUrl = "https://vipspa.pythonanywhere.com/api/vipspa/blog-pages/";
     const url = isEditing ? `${baseUrl}${formData.slug}/` : baseUrl;
     const method = isEditing ? "PATCH" : "POST";
 
     try {
-      const res = await fetch(url, {
+      await axios({
         method: method,
+        url: url,
+        data: data,
         headers: { Authorization: `Bearer ${token}` },
-        body: data,
       });
-
-      if (res.ok) {
-        alert(isEditing ? "Updated Successfully!" : "Published Successfully!");
-        resetForm();
-        fetchBlogs();
-      }
+      showAlert("success", isEditing ? "Blog updated!" : "Blog published!");
+      resetForm();
+      fetchBlogs();
     } catch (err) {
-      alert("Error updating blog");
+      showAlert("danger", "Something went wrong. Please check inputs.");
     }
   };
 
   const handleDeleteBlog = async (slug) => {
-    if (!confirm("Delete All Blog?")) return;
+    if (!confirm("Are you sure you want to delete this blog?")) return;
     const token = localStorage.getItem("adminToken");
-    await fetch(`http://127.0.0.1:8000/api/vipspa/blog-pages/${slug}/`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    fetchBlogs();
+    try {
+      await axios.delete(
+        `https://vipspa.pythonanywhere.com/api/vipspa/blog-pages/${slug}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      showAlert("success", "Blog deleted successfully.");
+      fetchBlogs();
+    } catch (err) {
+      showAlert("danger", "Delete operation failed.");
+    }
   };
 
   const handleDeleteComment = async (commentId) => {
-    if (!confirm("Delete Comment?")) return;
+    if (!confirm("Delete this comment?")) return;
     const token = localStorage.getItem("adminToken");
-    const res = await fetch(
-      `http://127.0.0.1:8000/api/vipspa/comments/${commentId}/`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      },
-    );
-    if (res.ok) {
-      alert("Comment Deleted!");
-      fetchBlogs(); // কমেন্ট লিস্ট রিফ্রেশ করার জন্য
+    try {
+      await axios.delete(
+        `https://vipspa.pythonanywhere.com/api/vipspa/comments/${commentId}/`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      fetchBlogs();
+    } catch (err) {
+      showAlert("danger", "Failed to delete comment.");
     }
   };
 
@@ -131,190 +140,303 @@ const BlogManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="container-fluid py-4">
-        <h3 className="fw-bold mb-4 text-white">
-          ✍️ Blog & Comment Management
-        </h3>
+      <div className="main-wrapper py-4">
+        {/* Floating Alert Messages */}
+        {status.msg && (
+          <div
+            className={`alert alert-${status.type} floating-alert shadow-sm border-0`}
+          >
+            {status.type === "success" ? "✅ " : "❌ "} {status.msg}
+          </div>
+        )}
 
-        <div className="row">
-          {/* ব্লগ ফর্ম */}
-          <div className="col-lg-5">
-            <div
-              className="card shadow border-0 bg-dark text-white p-4 sticky-top"
-              style={{ top: "20px" }}
-            >
-              <h5 className="text-warning mb-4">
-                {isEditing ? "🛠️ Edit Post" : "🆕 New Post"}
-              </h5>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label className="small">Post Title</label>
-                  <input
-                    type="text"
-                    className="form-control bg-secondary text-white border-0"
-                    value={formData.title}
-                    onChange={(e) =>
-                      setFormData({ ...formData, title: e.target.value })
-                    }
-                    required
-                  />
-                </div>
-
-                <div className="mb-3">
-                  <label className="small">Category</label>
-                  <select
-                    className="form-select bg-secondary text-white border-0"
-                    value={formData.category}
-                    onChange={(e) =>
-                      setFormData({ ...formData, category: e.target.value })
-                    }
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="mb-3">
-                  <label className="small">Content</label>
-                  <textarea
-                    className="form-control bg-secondary text-white border-0"
-                    rows="5"
-                    value={formData.content}
-                    onChange={(e) =>
-                      setFormData({ ...formData, content: e.target.value })
-                    }
-                    required
-                  ></textarea>
-                </div>
-
-                <div className="mb-3">
-                  <label className="small">Featured Image</label>
-                  <input
-                    type="file"
-                    className="form-control bg-secondary text-white border-0"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setFormData({ ...formData, image: file });
-                        setPreview(URL.createObjectURL(file));
-                      }
-                    }}
-                  />
-                  {preview && (
-                    <img
-                      src={preview}
-                      className="mt-2 rounded w-100"
-                      style={{ maxHeight: "150px", objectFit: "cover" }}
-                      alt="preview"
-                    />
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  className={`btn w-100 fw-bold ${isEditing ? "btn-warning" : "btn-success"}`}
-                >
-                  {isEditing ? "UPDATE POST" : "PUBLISH POST"}
-                </button>
-                {isEditing && (
-                  <button
-                    type="button"
-                    className="btn btn-link text-white w-100 mt-2"
-                    onClick={resetForm}
-                  >
-                    Cancel
-                  </button>
-                )}
-              </form>
+        <div className="container-fluid">
+          <div className="row mb-4">
+            <div className="col">
+              <h2 className="fw-bold text-dark">Blog Management</h2>
+              <p className="text-muted small">
+                Create, edit and manage your blog posts and comments.
+              </p>
             </div>
           </div>
 
-          {/* ব্লগ এবং কমেন্ট লিস্ট */}
-          <div className="col-lg-7">
-            {blogs.map((blog) => (
+          <div className="row g-4">
+            {/* ব্লগ ফর্ম সেকশন */}
+            <div className="col-lg-4">
               <div
-                key={blog.id}
-                className="card bg-dark text-white shadow-sm border-secondary mb-4 overflow-hidden"
+                className="card border-0 shadow-sm sticky-top"
+                style={{ top: "20px", borderRadius: "12px" }}
               >
-                <div className="row g-0">
-                  <div className="col-md-3">
-                    <img
-                      src={blog.image}
-                      className="img-fluid h-100 w-100"
-                      style={{ objectFit: "cover" }}
-                      alt=""
-                    />
-                  </div>
-                  <div className="col-md-9 p-3">
-                    <div className="d-flex justify-content-between align-items-start">
-                      <div>
-                        <span className="badge bg-warning text-dark mb-1">
-                          {blog.category_name}
-                        </span>
-                        <h5 className="mb-0">{blog.title}</h5>
-                        <small className="text-muted">
-                          {new Date(blog.created_at).toLocaleDateString()}
-                        </small>
-                      </div>
-                      <div className="btn-group">
-                        <button
-                          className="btn btn-sm btn-outline-info"
-                          onClick={() => handleEditClick(blog)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDeleteBlog(blog.slug)}
-                        >
-                          Delete
-                        </button>
-                      </div>
+                <div className="card-body p-4">
+                  <h5 className="fw-bold mb-4">
+                    {isEditing ? "Edit Post" : "Add New Post"}
+                  </h5>
+                  <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small">
+                        TITLE
+                      </label>
+                      <input
+                        type="text"
+                        className="form-control custom-input"
+                        value={formData.title}
+                        onChange={(e) =>
+                          setFormData({ ...formData, title: e.target.value })
+                        }
+                        required
+                      />
                     </div>
 
-                    {/* এই ব্লগের কমেন্টগুলো এখানে দেখাবে */}
-                    <div
-                      className="mt-3 p-2 bg-secondary rounded"
-                      style={{ fontSize: "13px" }}
-                    >
-                      <h6 className="small fw-bold border-bottom border-dark pb-1">
-                        Comments ({blog.comments?.length || 0})
-                      </h6>
-                      {blog.comments && blog.comments.length > 0 ? (
-                        blog.comments.map((comment) => (
-                          <div
-                            key={comment.id}
-                            className="d-flex justify-content-between align-items-center mt-2 border-bottom border-dark pb-1"
-                          >
-                            <div>
-                              <strong>{comment.name}: </strong>{" "}
-                              {comment.message}
-                            </div>
-                            <button
-                              className="btn btn-sm text-danger p-0"
-                              onClick={() => handleDeleteComment(comment.id)}
-                            >
-                              ✖
-                            </button>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-muted italic small">
-                          No comments yet.
-                        </div>
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small">
+                        CATEGORY
+                      </label>
+                      <select
+                        className="form-select custom-input"
+                        value={formData.category}
+                        onChange={(e) =>
+                          setFormData({ ...formData, category: e.target.value })
+                        }
+                        required
+                      >
+                        <option value="">Select Category</option>
+                        {categories.map((cat) => (
+                          <option key={cat.id} value={cat.id}>
+                            {cat.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small">
+                        CONTENT
+                      </label>
+                      <textarea
+                        className="form-control custom-input"
+                        rows="6"
+                        value={formData.content}
+                        onChange={(e) =>
+                          setFormData({ ...formData, content: e.target.value })
+                        }
+                        required
+                      ></textarea>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="form-label fw-semibold small">
+                        COVER IMAGE
+                      </label>
+                      <input
+                        type="file"
+                        className="form-control custom-input mb-2"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            setFormData({ ...formData, image: file });
+                            setPreview(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                      {preview && (
+                        <img
+                          src={preview}
+                          className="preview-box"
+                          alt="preview"
+                        />
                       )}
                     </div>
-                  </div>
+
+                    <div className="d-grid gap-2">
+                      <button
+                        type="submit"
+                        className={`btn btn-lg fw-bold ${isEditing ? "btn-dark" : "btn-primary"}`}
+                        style={{ fontSize: "14px" }}
+                      >
+                        {isEditing ? "Update Post" : "Publish Post"}
+                      </button>
+                      {isEditing && (
+                        <button
+                          type="button"
+                          className="btn btn-outline-secondary border-0 btn-sm"
+                          onClick={resetForm}
+                        >
+                          Cancel Edit
+                        </button>
+                      )}
+                    </div>
+                  </form>
                 </div>
               </div>
-            ))}
+            </div>
+
+            {/* ব্লগ লিস্ট সেকশন */}
+            <div className="col-lg-8">
+              {loading ? (
+                <div className="text-center py-5">
+                  <div className="spinner-border text-primary"></div>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {blogs.map((blog) => (
+                    <div key={blog.id} className="col-12">
+                      <div className="card border-0 shadow-sm blog-card">
+                        <div className="row g-0">
+                          <div className="col-md-3">
+                            <img src={blog.image} className="blog-img" alt="" />
+                          </div>
+                          <div className="col-md-9">
+                            <div className="card-body p-4">
+                              <div className="d-flex justify-content-between align-items-start">
+                                <div>
+                                  <span className="badge bg-light text-primary border border-primary-subtle mb-2">
+                                    {blog.category_name}
+                                  </span>
+                                  <h5 className="fw-bold text-dark mb-1">
+                                    {blog.title}
+                                  </h5>
+                                  <p className="text-muted small">
+                                    {new Date(blog.created_at).toDateString()}
+                                  </p>
+                                </div>
+                                <div className="action-btns">
+                                  <button
+                                    className="btn btn-sm btn-outline-primary me-2"
+                                    onClick={() => handleEditClick(blog)}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button
+                                    className="btn btn-sm btn-outline-danger"
+                                    onClick={() => handleDeleteBlog(blog.slug)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+
+                              {/* <p className="text-secondary small mt-2">
+                                {blog.content?.substring(0, 150)}...
+                              </p> */}
+
+                              {/* Comment List inside Blog Card */}
+                              <div className="comment-wrapper mt-3">
+                                <h6 className="small fw-bold text-dark border-bottom pb-2">
+                                  Comments ({blog.comments?.length || 0})
+                                </h6>
+                                {blog.comments &&
+                                  blog.comments.map((comment) => (
+                                    <div
+                                      key={comment.id}
+                                      className="d-flex justify-content-between align-items-center py-2 border-bottom-dotted"
+                                    >
+                                      <div className="small">
+                                        <span className="fw-bold text-dark">
+                                          {comment.name}:{" "}
+                                        </span>
+                                        <span className="text-muted">
+                                          {comment.message}
+                                        </span>
+                                      </div>
+                                      <button
+                                        className="btn btn-link text-danger p-0"
+                                        onClick={() =>
+                                          handleDeleteComment(comment.id)
+                                        }
+                                      >
+                                        ✖
+                                      </button>
+                                    </div>
+                                  ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* --- হোয়াইট মোড ক্লিন সিএসএস --- */}
+        <style jsx>{`
+          .main-wrapper {
+            background-color: #f3f4f6;
+            min-height: 100vh;
+            color: #374151;
+          }
+          .custom-input {
+            background-color: #ffffff;
+            border: 1px solid #d1d5db;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 8px;
+          }
+          .custom-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+          }
+          .preview-box {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+          }
+          .blog-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            transition: all 0.3s;
+          }
+          .blog-card:hover {
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
+          }
+          .blog-img {
+            width: 100%;
+            height: 100%;
+            min-height: 180px;
+            object-fit: cover;
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+          }
+          .comment-wrapper {
+            background-color: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+          }
+          .border-bottom-dotted {
+            border-bottom: 1px dotted #e5e7eb;
+          }
+          .floating-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            background: white;
+            border-left: 4px solid #3b82f6;
+            min-width: 280px;
+            animation: fadeIn 0.4s ease;
+          }
+          @keyframes fadeIn {
+            from {
+              opacity: 0;
+              transform: translateY(-10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          .action-btns .btn {
+            border-radius: 6px;
+            font-size: 12px;
+            padding: 4px 12px;
+            font-weight: 600;
+          }
+        `}</style>
       </div>
     </AdminLayout>
   );

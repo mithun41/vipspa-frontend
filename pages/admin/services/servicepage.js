@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import AdminLayout from "../../../components/AdminLayout";
 import withAuth from "../../../components/withAuth";
 
-const BASE_URL = "http://127.0.0.1:8000/api/vipspa/services/";
+const BASE_URL = "https://vipspa.pythonanywhere.com//api/vipspa/services/";
 
 function ServiceAdmin() {
   const [services, setServices] = useState({
@@ -29,13 +29,16 @@ function ServiceAdmin() {
     try {
       const token = localStorage.getItem("adminToken"); // টোকেন নিন
 
-      const res = await fetch("http://127.0.0.1:8000/api/vipspa/services/", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`, // টোকেন পাঠাতে হবে
-          "Content-Type": "application/json",
+      const res = await fetch(
+        "https://vipspa.pythonanywhere.com//api/vipspa/services/",
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // টোকেন পাঠাতে হবে
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       if (res.status === 401) {
         alert("login session expired. Please login again.");
