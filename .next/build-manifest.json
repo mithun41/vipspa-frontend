@@ -27,15 +27,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin/services/servicepage": [
+    "/admin": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/admin/services/servicepage.js"
+      "static/chunks/pages/admin.js"
     ],
-    "/page-services": [
+    "/admin/blogpage/blogpage": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/page-services.js"
+      "static/chunks/pages/admin/blogpage/blogpage.js"
+    ],
+    "/admin/hero": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin/hero.js"
+    ],
+    "/admin/settings": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/admin/settings.js"
     ]
   },
   "ampFirstPages": []

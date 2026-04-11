@@ -152,7 +152,7 @@ export default function AdminSidebar() {
             {
               href: "/admin/new-section",
               icon: "🍱",
-              label: "Home Sections",
+              label: "Add New Sections",
             }, // এটি আপনার নতুন রুট
             { href: "/admin/hero", icon: "🖼️", label: "Hero Slides" },
             { href: "/admin/marquee", icon: "⚡", label: "Marquee Text" },

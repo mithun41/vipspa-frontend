@@ -2,7 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/admin/blogpage/blogpage": "pages/admin/blogpage/blogpage.js",
   "/": "pages/index.js",
-  "/page-services": "pages/page-services.js",
-  "/admin/services/servicepage": "pages/admin/services/servicepage.js"
+  "/admin/settings": "pages/admin/settings.js",
+  "/admin": "pages/admin.js",
+  "/admin/hero": "pages/admin/hero.js"
 }

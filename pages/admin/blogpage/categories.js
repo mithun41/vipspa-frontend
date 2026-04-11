@@ -16,7 +16,7 @@ export default function CategoryPage() {
   const fetchCategories = async () => {
     try {
       const res = await axios.get(
-        "http://127.0.0.1:8000//api/vipspa/categories/",
+        "https://vipspa.pythonanywhere.com//api/vipspa/categories/",
       );
       setCategories(res.data);
       setLoading(false);
@@ -40,7 +40,7 @@ export default function CategoryPage() {
 
     try {
       await axios.post(
-        "http://127.0.0.1:8000//api/vipspa/categories/",
+        "https://vipspa.pythonanywhere.com//api/vipspa/categories/",
         { name: newCategory },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -83,7 +83,7 @@ export default function CategoryPage() {
 
         try {
           await axios.delete(
-            `http://127.0.0.1:8000//api/vipspa/categories/${id}/`,
+            `https://vipspa.pythonanywhere.com//api/vipspa/categories/${id}/`,
             {
               headers: { Authorization: `Bearer ${token}` },
             },
