@@ -54,27 +54,25 @@ export default function Footer1() {
                 </div>
                 <div className="text">{config.footer_description}</div>
                 <ul className="social-icon">
-                  {config.facebook_url && (
-                    <li>
-                      <Link href={config.facebook_url}>
-                        <i className="icon fab fa-facebook-f"></i>
-                      </Link>
-                    </li>
-                  )}
-                  {config.twitter_url && (
-                    <li>
-                      <Link href={config.twitter_url}>
-                        <i className="icon fab fa-twitter"></i>
-                      </Link>
-                    </li>
-                  )}
-                  {config.instagram_url && (
-                    <li>
-                      <Link href={config.instagram_url}>
-                        <i className="icon fab fa-instagram"></i>
-                      </Link>
-                    </li>
-                  )}
+                  <li>
+                    <a
+                      href={`https://wa.me/${config.phone_number?.replace("+", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="icon fab fa-whatsapp"></i>
+                    </a>
+                  </li>
+
+                  <li>
+                    <a
+                      href={`https://t.me/${config.phone_number?.replace("+", "")}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <i className="icon fab fa-telegram-plane"></i>
+                    </a>
+                  </li>
                 </ul>
               </div>
             </div>
@@ -106,19 +104,20 @@ export default function Footer1() {
       <div className="footer-bottom">
         <div className="auto-container">
           <div className="inner-container">
-            <figure className="image">
-              <img
-                src="images/icons/footer-bottom-img-1.png"
-                alt="Payment Methods"
-              />
-            </figure>
+            <figure className="image"></figure>
             <div className="copyright-text">
-              &copy; {new Date().getFullYear()} {config.site_name}, Reserved By
-              Kodesolution
+              &copy; {new Date().getFullYear()} {config.site_name}, Developed By{" "}
+              <span>
+                <a
+                  href="https://www.softzenit.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Softzen IT
+                </a>
+              </span>
             </div>
-            <Link className="link" href="/">
-              Terms & Conditions
-            </Link>
+            <Link className="link" href="/"></Link>
           </div>
         </div>
       </div>

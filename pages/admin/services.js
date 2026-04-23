@@ -29,19 +29,33 @@ const ManageServices = () => {
   }, []);
 
   const fetchServices = async () => {
+    const token = localStorage.getItem("adminToken");
+
     try {
       const res = await fetch(
         "https://vipspa.pythonanywhere.com/api/vipspa/services/",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
+
       const data = await res.json();
-      setServices(data || []);
+
+      if (Array.isArray(data)) {
+        setServices(data);
+      } else {
+        console.error("API did not return an array:", data);
+        setServices([]);
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Fetch error:", err);
+      setServices([]);
     } finally {
       setLoading(false);
     }
   };
-
   // --- FAQ Handlers ---
   const handleFaqChange = (index, field, value) => {
     const updatedFaqs = [...formData.faq_data];

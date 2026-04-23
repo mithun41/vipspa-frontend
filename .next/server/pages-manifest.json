@@ -2,9 +2,5 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/admin/blogpage/blogpage": "pages/admin/blogpage/blogpage.js",
-  "/": "pages/index.js",
-  "/admin/settings": "pages/admin/settings.js",
-  "/admin": "pages/admin.js",
-  "/admin/hero": "pages/admin/hero.js"
+  "/page-about": "pages/page-about.js"
 }

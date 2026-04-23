@@ -1,13 +1,30 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+
 import AdminLayout from "../../components/AdminLayout";
 import withAuth from "../../components/withAuth";
 
+const ReactQuill = dynamic(() => import("react-quill"), {
+  ssr: false,
+});
+
 const ManageHomeSection = () => {
+  const API_URL = "https://vipspa.pythonanywhere.com/api/vipspa/home-sections/";
+
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState({ type: "", msg: "" }); // এরর হ্যান্ডলিং স্টেট
+  const [isEditing, setIsEditing] = useState(false);
+
+  const [status, setStatus] = useState({
+    type: "",
+    msg: "",
+  });
+
+  const [imagePreview, setImagePreview] = useState(null);
 
   const initialFormState = {
     id: null,
@@ -21,15 +38,36 @@ const ManageHomeSection = () => {
   };
 
   const [formData, setFormData] = useState(initialFormState);
-  const [isEditing, setIsEditing] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
 
-  const API_URL = "https://vipspa.pythonanywhere.com/api/vipspa/home-sections/";
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline"],
+      ["link"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["clean"],
+    ],
+  };
 
-  // মেসেজ অটোমেটিক মুছে ফেলার ফাংশন
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "link",
+    "list",
+    "bullet",
+  ];
+
   const showAlert = (type, msg) => {
     setStatus({ type, msg });
-    setTimeout(() => setStatus({ type: "", msg: "" }), 5000); // ৫ সেকেন্ড পর মুছে যাবে
+
+    setTimeout(() => {
+      setStatus({
+        type: "",
+        msg: "",
+      });
+    }, 5000);
   };
 
   useEffect(() => {
@@ -41,7 +79,7 @@ const ManageHomeSection = () => {
       const res = await axios.get(API_URL);
       setSections(res.data);
     } catch (err) {
-      showAlert("danger", "Failed to load sections. Is the server running?");
+      showAlert("danger", "Failed to load sections");
     } finally {
       setLoading(false);
     }
@@ -49,39 +87,53 @@ const ManageHomeSection = () => {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (name === "image") {
-      setFormData({ ...formData, image: files[0] });
+      if (!files?.[0]) return;
+
+      setFormData((prev) => ({
+        ...prev,
+        image: files[0],
+      }));
+
       setImagePreview(URL.createObjectURL(files[0]));
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const token = localStorage.getItem("adminToken");
 
     if (!token) {
-      showAlert("danger", "Session expired. Please login again.");
+      showAlert("danger", "Login required.");
       return;
     }
 
-    const data = new FormData();
+    const fd = new FormData();
+
     Object.keys(formData).forEach((key) => {
-      if (key === "image" && formData[key] === null) return;
-      if (formData[key] !== null && key !== "id") {
-        data.append(key, formData[key]);
+      if (key === "image" && formData.image === null) return;
+
+      if (key !== "id" && formData[key] !== null) {
+        fd.append(key, formData[key]);
       }
     });
 
     const url = isEditing ? `${API_URL}${formData.id}/` : API_URL;
+
     const method = isEditing ? "PATCH" : "POST";
 
     try {
       const res = await axios({
-        method: method,
-        url: url,
-        data: data,
+        method,
+        url,
+        data: fd,
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -91,306 +143,281 @@ const ManageHomeSection = () => {
       if (res.status === 200 || res.status === 201) {
         showAlert(
           "success",
-          isEditing
-            ? "Section updated successfully!"
-            : "New section added successfully!",
+          isEditing ? "Updated successfully" : "Created successfully",
         );
+
         resetForm();
         fetchSections();
       }
     } catch (err) {
-      const errorMsg =
-        err.response?.data?.message ||
-        "Something went wrong! Please check your inputs.";
-      showAlert("danger", errorMsg);
+      showAlert("danger", "Save failed");
     }
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this section?")) return;
+    if (!confirm("Delete this section?")) return;
+
     const token = localStorage.getItem("adminToken");
+
     try {
       await axios.delete(`${API_URL}${id}/`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      showAlert("success", "Section deleted successfully!");
+
+      showAlert("success", "Deleted");
+
       fetchSections();
-    } catch (err) {
-      showAlert("danger", "Delete failed! You might not have permission.");
+    } catch {
+      showAlert("danger", "Delete failed");
     }
   };
 
+  // FIXED EDIT
   const handleEditClick = (s) => {
+    console.log("editing:", s);
+
     setIsEditing(true);
-    setFormData({
-      id: s.id,
-      title: s.title || "",
-      subtitle: s.subtitle || "",
-      description: s.description || "",
-      button_text: s.button_text || "",
-      button_url: s.button_url || "",
-      extra_field: s.extra_field || "",
+
+    setFormData((prev) => ({
+      ...prev,
+      id: s?.id || null,
+      title: String(s?.title || ""),
+      subtitle: String(s?.subtitle || ""),
+      description: s?.description || "",
+      button_text: String(s?.button_text || "Know More"),
+      button_url: String(s?.button_url || ""),
+      extra_field: String(s?.extra_field || ""),
       image: null,
+    }));
+
+    setImagePreview(s?.image || null);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
     });
-    setImagePreview(s.image);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetForm = () => {
     setFormData(initialFormState);
+
     setImagePreview(null);
     setIsEditing(false);
   };
 
   return (
     <AdminLayout>
-      <div
-        className="container-fluid py-4"
-        style={{ background: "#f8f9fa", minHeight: "100vh" }}
-      >
-        {/* Floating Alert Messages */}
+      <div className="container-fluid py-4">
         {status.msg && (
           <div
-            className={`alert alert-${status.type} alert-dismissible fade show shadow`}
-            role="alert"
+            className={`alert alert-${status.type}`}
             style={{
               position: "fixed",
-              top: "20px",
-              right: "20px",
+              top: 20,
+              right: 20,
               zIndex: 9999,
-              minWidth: "300px",
             }}
           >
-            <strong>
-              {status.type === "success" ? "✅ Success" : "❌ Error"}:
-            </strong>{" "}
             {status.msg}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setStatus({ type: "", msg: "" })}
-            ></button>
           </div>
         )}
 
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 style={{ fontWeight: "700", color: "#1a202c" }}>
-            Manage Home Sections
-          </h2>
-        </div>
+        <h2 className="fw-bold mb-4">Manage Home Sections</h2>
 
-        {/* Form Card */}
-        <div
-          className="card border-0 shadow-sm mb-5 p-4"
-          style={{ borderRadius: "15px" }}
-        >
-          <h5 className="mb-4" style={{ color: "#4f46e5", fontWeight: "600" }}>
-            {isEditing ? "📝 Edit Home Section" : "➕ Add New Section"}
-          </h5>
+        <div className="card p-4 shadow-sm border-0 mb-5">
+          <h5 className="mb-4">{isEditing ? "Edit Section" : "Add Section"}</h5>
+
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
-                <label className="form-label fw-bold">Title</label>
+                <label>Title</label>
+
                 <input
                   type="text"
                   name="title"
-                  className="form-control"
-                  value={formData.title}
+                  value={formData.title || ""}
                   onChange={handleChange}
-                  required
+                  className="form-control"
                 />
               </div>
+
               <div className="col-md-6">
-                <label className="form-label fw-bold">Subtitle</label>
+                <label>Subtitle</label>
+
                 <input
                   type="text"
                   name="subtitle"
-                  className="form-control"
-                  value={formData.subtitle}
+                  value={formData.subtitle || ""}
                   onChange={handleChange}
+                  className="form-control"
                 />
               </div>
+
               <div className="col-12">
-                <label className="form-label fw-bold">Description</label>
-                <textarea
-                  name="description"
-                  className="form-control"
-                  rows="3"
+                <label>Description</label>
+
+                <ReactQuill
+                  theme="snow"
                   value={formData.description}
-                  onChange={handleChange}
-                ></textarea>
+                  onChange={(value) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      description: value,
+                    }))
+                  }
+                  modules={modules}
+                  formats={formats}
+                />
               </div>
+
               <div className="col-md-4">
-                <label className="form-label fw-bold">Button Text</label>
+                <label>Button Text</label>
+
                 <input
                   type="text"
                   name="button_text"
-                  className="form-control"
                   value={formData.button_text}
                   onChange={handleChange}
+                  className="form-control"
                 />
               </div>
+
               <div className="col-md-4">
-                <label className="form-label fw-bold">Button URL</label>
+                <label>Button URL</label>
+
                 <input
                   type="text"
                   name="button_url"
-                  className="form-control"
                   value={formData.button_url}
                   onChange={handleChange}
+                  className="form-control"
                 />
               </div>
+
               <div className="col-md-4">
-                <label className="form-label fw-bold">Extra Field</label>
+                <label>Extra Field</label>
+
                 <input
                   type="text"
                   name="extra_field"
-                  className="form-control"
                   value={formData.extra_field}
                   onChange={handleChange}
+                  className="form-control"
                 />
               </div>
+
               <div className="col-md-6">
-                <label className="form-label fw-bold">Section Image</label>
+                <label>Image</label>
+
                 <input
                   type="file"
                   name="image"
-                  className="form-control"
                   onChange={handleChange}
+                  className="form-control"
                 />
+
                 {imagePreview && (
-                  <div className="mt-2">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      style={{
-                        width: "120px",
-                        height: "70px",
-                        borderRadius: "8px",
-                        objectFit: "cover",
-                        border: "1px solid #ddd",
-                      }}
-                    />
-                  </div>
+                  <img
+                    src={imagePreview}
+                    alt=""
+                    className="mt-3"
+                    style={{
+                      width: 120,
+                      height: 70,
+                      objectFit: "cover",
+                    }}
+                  />
                 )}
               </div>
-              <div className="col-12 mt-4 text-end">
+
+              <div className="col-12 text-end mt-4">
                 {isEditing && (
                   <button
                     type="button"
-                    className="btn btn-light me-2 px-4"
                     onClick={resetForm}
+                    className="btn btn-light me-2"
                   >
                     Cancel
                   </button>
                 )}
+
                 <button
-                  type="submit"
-                  className={`btn ${isEditing ? "btn-success" : "btn-primary"} px-5 fw-bold`}
+                  className={`btn ${isEditing ? "btn-success" : "btn-primary"}`}
                 >
-                  {isEditing ? "Update Changes" : "Save Section"}
+                  {isEditing ? "Update" : "Save"}
                 </button>
               </div>
             </div>
           </form>
         </div>
 
-        {/* Table Card */}
-        <div
-          className="card border-0 shadow-sm p-4"
-          style={{ borderRadius: "15px" }}
-        >
-          <h5 className="mb-4 fw-bold">Active Content</h5>
-          <div className="table-responsive">
-            <table className="table align-middle">
-              <thead className="table-light">
+        <div className="card p-4 shadow-sm border-0">
+          <h5 className="mb-4">Active Content</h5>
+
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {loading ? (
                 <tr>
-                  <th>Image</th>
-                  <th>Content Info</th>
-                  <th>Description</th>
-                  <th className="text-end">Actions</th>
+                  <td colSpan="4">Loading...</td>
                 </tr>
-              </thead>
-              <tbody>
-                {loading ? (
-                  <tr>
-                    <td colSpan="4" className="text-center py-5">
-                      <div
-                        className="spinner-border text-primary"
-                        role="status"
-                      ></div>
+              ) : (
+                sections.map((s) => (
+                  <tr key={s.id}>
+                    <td>
+                      <img
+                        src={s.image}
+                        style={{
+                          width: 70,
+                          height: 45,
+                          objectFit: "cover",
+                        }}
+                      />
+                    </td>
+
+                    <td>
+                      <div>{s.title}</div>
+
+                      <small>{s.subtitle}</small>
+                    </td>
+
+                    <td>
+                      {s.description?.replace(/<[^>]*>/g, "").substring(0, 80)}
+                      ...
+                    </td>
+
+                    <td className="text-end">
+                      <button
+                        onClick={() => handleEditClick(s)}
+                        className="btn btn-sm btn-outline-primary me-2"
+                      >
+                        Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDelete(s.id)}
+                        className="btn btn-sm btn-outline-danger"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
-                ) : sections.length === 0 ? (
-                  <tr>
-                    <td colSpan="4" className="text-center py-4">
-                      No data found.
-                    </td>
-                  </tr>
-                ) : (
-                  sections.map((s) => (
-                    <tr key={s.id}>
-                      <td>
-                        <img
-                          src={s.image}
-                          alt="section"
-                          style={{
-                            width: "70px",
-                            height: "45px",
-                            objectFit: "cover",
-                            borderRadius: "6px",
-                          }}
-                        />
-                      </td>
-                      <td>
-                        <div className="fw-bold" style={{ fontSize: "14px" }}>
-                          {s.title}
-                        </div>
-                        <small className="text-muted">{s.subtitle}</small>
-                      </td>
-                      <td>
-                        <div style={{ fontSize: "12px", maxWidth: "250px" }}>
-                          {s.description?.substring(0, 70)}...
-                        </div>
-                      </td>
-                      <td className="text-end">
-                        <button
-                          className="btn btn-sm btn-outline-primary me-2"
-                          onClick={() => handleEditClick(s)}
-                        >
-                          Edit
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDelete(s.id)}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
-
-      <style jsx>{`
-        .alert {
-          animation: slideIn 0.5s ease-out;
-        }
-        @keyframes slideIn {
-          from {
-            transform: translateX(100%);
-            opacity: 0;
-          }
-          to {
-            transform: translateX(0);
-            opacity: 1;
-          }
-        }
-      `}</style>
     </AdminLayout>
   );
 };

@@ -5,6 +5,7 @@ import Breadcrumb from "./Breadcrumb";
 import Footer1 from "./Footer1";
 import PageHead from "./PageHead";
 import Header2 from "./Header2";
+import FloatingActionButton from "../sections/FloatingActionButton";
 
 export default function Layout({ headTitle, breadcrumbTitle, children }) {
   const [scroll, setScroll] = useState(false);
@@ -52,7 +53,7 @@ export default function Layout({ headTitle, breadcrumbTitle, children }) {
           {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} />}
           {children}
         </main>
-
+        <FloatingActionButton />
         <Footer1 />
       </div>
       <BackToTop />

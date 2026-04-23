@@ -3,6 +3,10 @@ import { useEffect, useState } from "react";
 import AdminLayout from "@/components/AdminLayout";
 import withAuth from "@/components/withAuth";
 import axios from "axios";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
@@ -11,11 +15,29 @@ const BlogManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
   const [status, setStatus] = useState({ type: "", msg: "" });
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, false] }],
+    ["bold", "italic", "underline"],
+    ["link"], // <-- link add করার জন্য
+    [{ list: "ordered" }, { list: "bullet" }],
+    ["clean"],
+  ],
+};
 
+const formats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "link",
+  "list",
+  "bullet",
+];
   const initialFormState = {
     id: null,
     title: "",
-    content: "",
+    content: "", // <-- null না, empty string
     category: "",
     author: "Admin",
     tags: "",
@@ -121,16 +143,25 @@ const BlogManagement = () => {
     }
   };
 
-  const handleEditClick = (blog) => {
-    setIsEditing(true);
-    setFormData({
-      ...blog,
-      category: blog.category || "",
-      image: null,
-    });
-    setPreview(blog.image);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+const handleEditClick = (blog) => {
+  setIsEditing(true);
+
+  setFormData((prev) => ({
+    ...prev,
+    id: blog.id,
+    title: blog.title || "",
+    content: blog.content || "",
+    category: blog.category ? String(blog.category) : "",
+    author: blog.author || "Admin",
+    tags: blog.tags || "",
+    image: null,
+    slug: blog.slug || "",
+  }));
+
+  setPreview(blog.image || null);
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
   const resetForm = () => {
     setFormData(initialFormState);
@@ -179,9 +210,12 @@ const BlogManagement = () => {
                       <input
                         type="text"
                         className="form-control custom-input"
-                        value={formData.title}
+                        value={formData.title || ""}
                         onChange={(e) =>
-                          setFormData({ ...formData, title: e.target.value })
+                          setFormData((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
                         }
                         required
                       />
@@ -195,7 +229,10 @@ const BlogManagement = () => {
                         className="form-select custom-input"
                         value={formData.category}
                         onChange={(e) =>
-                          setFormData({ ...formData, category: e.target.value })
+                          setFormData((prev) => ({
+                            ...prev,
+                            category: e.target.value,
+                          }))
                         }
                         required
                       >
@@ -212,15 +249,19 @@ const BlogManagement = () => {
                       <label className="form-label fw-semibold small">
                         CONTENT
                       </label>
-                      <textarea
-                        className="form-control custom-input"
-                        rows="6"
+                      <ReactQuill
+                        theme="snow"
                         value={formData.content}
-                        onChange={(e) =>
-                          setFormData({ ...formData, content: e.target.value })
+                        onChange={(value) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            content: value,
+                          }))
                         }
-                        required
-                      ></textarea>
+                        modules={modules}
+                        formats={formats}
+                        className="custom-quill"
+                      />
                     </div>
 
                     <div className="mb-4">
@@ -419,6 +460,13 @@ const BlogManagement = () => {
             border-left: 4px solid #3b82f6;
             min-width: 280px;
             animation: fadeIn 0.4s ease;
+          }
+          .custom-quill .ql-container {
+            min-height: 150px;
+            border-radius: 0 0 8px 8px;
+          }
+          .custom-quill .ql-toolbar {
+            border-radius: 8px 8px 0 0;
           }
           @keyframes fadeIn {
             from {

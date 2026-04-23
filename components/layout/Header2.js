@@ -36,12 +36,14 @@ export default function Header2({
             </div>
 
             <div className="outer-box ">
-              <button className="ui-btn callbtn d-none-mobile  ">
-                <a href="tel:+8801891450300" className="ui-btn callbtn">
-                  <i className="fa-thin fa-phone"></i>
-                  <span className="number  ">+8801891450300</span>
-                </a>
-              </button>
+              <a
+                href="tel:+8801891450300"
+                className="ui-btn callbtn d-none-mobile"
+              >
+                <i className="fa-thin fa-phone"></i>
+
+                <span className="number">+8801891450300</span>
+              </a>
               <div className="divider"></div>
               <div className="mobile-nav-toggler" onClick={handleMobileMenu}>
                 <span className="icon fa-thin fa-bars-staggered fa-rotate-180"></span>
@@ -71,7 +73,9 @@ export default function Header2({
                 <div className="contact-info-box">
                   <i className="icon lnr-icon-phone-handset" />
                   <span className="title">Call Now</span>
-                  <Link href="/tel:+8801891450300">+880 1891450300</Link>
+                  <a href="tel:+8801891450300">
+                    <span className="text">+8801891450300</span>
+                  </a>
                 </div>
               </li>
               <li>

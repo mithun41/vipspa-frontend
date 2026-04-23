@@ -1,5 +1,6 @@
 import Layout from "@/components/layout/Layout";
 import About1 from "@/components/sections/About5T1";
+import AboutPage from "@/components/sections/AboutPage";
 import Clients8 from "@/components/sections/Clients8";
 import Contact1 from "@/components/sections/Contact1";
 import PageTitle from "@/components/sections/PageTitle";
@@ -29,7 +30,8 @@ export default function PageAbout() {
     <>
       <Layout headerStyle={2} footerStyle={2}>
         <PageTitle pageName="About Us" />
-        <About1 aboutData={homeData?.about || {}} />
+        {/* <About1 aboutData={homeData?.about || {}} /> */}
+        <AboutPage />
 
         <Clients8 />
 
