@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import Menu from "./Menu";
 import MobileMenu from "./MobileMenu";
 
@@ -6,9 +8,27 @@ export default function Header2({
   scroll,
   isSearch,
   handleSearch,
-  isMobileMenu,
   handleMobileMenu,
 }) {
+  const [siteConfig, setSiteConfig] = useState(null);
+
+  useEffect(() => {
+    const fetchConfig = async () => {
+      try {
+        const res = await axios.get(
+          "https://vipspa.pythonanywhere.com/api/vipspa/homepage/"
+        );
+        // API রেসপন্স থেকে সাইট কনফিগ সেট করা হচ্ছে
+        setSiteConfig(res.data.site_config);
+      } catch (err) {
+        console.error("Error fetching site config:", err);
+      }
+    };
+    fetchConfig();
+  }, []);
+
+  const config = siteConfig || {};
+
   return (
     <>
       <header
@@ -21,7 +41,10 @@ export default function Header2({
             <div className="logo-box">
               <div className="logo">
                 <Link href="/">
-                  <img src="images/logo.png" alt="Logo" />
+                  <img
+                    src={"/images/logo.png"}
+                    alt="Logo"
+                  />
                 </Link>
               </div>
             </div>
@@ -35,15 +58,18 @@ export default function Header2({
               </div>
             </div>
 
-            <div className="outer-box ">
-              <a
-                href="tel:+8801891450300"
-                className="ui-btn callbtn d-none-mobile"
-              >
-                <i className="fa-thin fa-phone"></i>
-
-                <span className="number">+8801891450300</span>
-              </a>
+            <div className="outer-box">
+              <button className="ui-btn callbtn d-none-mobile">
+                <a
+                  href={`tel:${config.phone_number}`}
+                  className="ui-btn callbtn"
+                >
+                  <i className="fa-thin fa-phone"></i>
+                  <span className="number">
+                    {config.phone_number || "+8801891450300"}
+                  </span>
+                </a>
+              </button>
               <div className="divider"></div>
               <div className="mobile-nav-toggler" onClick={handleMobileMenu}>
                 <span className="icon fa-thin fa-bars-staggered fa-rotate-180"></span>
@@ -51,101 +77,74 @@ export default function Header2({
             </div>
           </div>
         </div>
-        {/* Mobile Menu  */}
+
+        {/* Mobile Menu Section */}
         <div className="mobile-menu">
           <div className="menu-backdrop" onClick={handleMobileMenu} />
-          {/*Here Menu Will Come Automatically Via Javascript / Same Menu as in Header*/}
           <nav className="menu-box">
             <div className="upper-box">
               <div className="nav-logo">
                 <Link href="/">
-                  <img src="/images/logo-2.png" alt="" />
+                  <img
+                    src={config.footer_logo || "/images/logo.png"}
+                    alt="Logo"
+                  />
                 </Link>
               </div>
               <div className="close-btn" onClick={handleMobileMenu}>
                 <i className="icon fa fa-times" />
               </div>
             </div>
-            <MobileMenu />
+            
+            {/* এখানে handleMobileMenu পাস করা হয়েছে যাতে লিঙ্কে ক্লিক করলে মেনু ক্লোজ হয় */}
+            <MobileMenu handleMobileMenu={handleMobileMenu} />
+
             <ul className="contact-list-one">
               <li>
-                {/* Contact Info Box */}
                 <div className="contact-info-box">
                   <i className="icon lnr-icon-phone-handset" />
                   <span className="title">Call Now</span>
-                  <a href="tel:+8801891450300">
-                    <span className="text">+8801891450300</span>
+                  <a href={`tel:${config.phone_number}`}>
+                    {config.phone_number}
                   </a>
                 </div>
               </li>
               <li>
-                {/* Contact Info Box */}
                 <div className="contact-info-box">
                   <span className="icon lnr-icon-envelope1" />
                   <span className="title">Send Email</span>
-                  <Link href="/mailto:vipspadhaka@gmail.com">
-                    vipspadhaka@gmail.com
-                  </Link>
+                  <Link href={`mailto:${config.email}`}>{config.email}</Link>
                 </div>
               </li>
               <li>
-                {/* Contact Info Box */}
                 <div className="contact-info-box">
                   <span className="icon lnr-icon-clock" />
-                  <span className="title">Send Email</span>
-                  Sat - Fri 9:00 - 23:00
+                  <span className="title">Opening Hours</span>
+                  Sat - Fri {config.sat_time}
                 </div>
               </li>
             </ul>
-            <ul className="social-links">
+            {/* <ul className="social-links">
               <li>
-                <Link href="/#">
+                <Link href={config.twitter_url || "#"}>
                   <i className="fab fa-twitter" />
                 </Link>
               </li>
               <li>
-                <Link href="/#">
+                <Link href={config.facebook_url || "#"}>
                   <i className="fab fa-facebook-f" />
                 </Link>
               </li>
               <li>
-                <Link href="/#">
-                  <i className="fab fa-pinterest" />
-                </Link>
-              </li>
-              <li>
-                <Link href="/#">
+                <Link href={config.instagram_url || "#"}>
                   <i className="fab fa-instagram" />
                 </Link>
               </li>
-            </ul>
+            </ul> */}
           </nav>
         </div>
-        {/* End Mobile Menu */}
-        {/* Header Search */}
-        <div className="search-popup">
-          <span className="search-back-drop" onClick={handleSearch} />
-          <button className="close-search" onClick={handleSearch}>
-            <span className="fa fa-times" />
-          </button>
-          <div className="search-inner">
-            <form method="post" action="">
-              <div className="form-group">
-                <input
-                  type="search"
-                  name="search-field"
-                  placeholder="Search..."
-                  required
-                />
-                <button type="submit">
-                  <i className="fa fa-search" />
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-        {/* End Header Search */}
-        {/* Sticky Header  */}
+
+        {/* Sticky Header */}
         <div
           className={`sticky-header ${
             scroll ? "fixed-header animated slideInDown" : ""
@@ -153,22 +152,20 @@ export default function Header2({
         >
           <div className="auto-container">
             <div className="inner-container">
-              {/*Logo*/}
               <div className="logo">
                 <Link href="/">
-                  <img src="images/logo.png" alt="Logo" />
+                  <img
+                    src={config.footer_logo || "/images/logo.png"}
+                    alt="Logo"
+                  />
                 </Link>
               </div>
-              {/*Right Col*/}
               <div className="nav-outer">
-                {/* Main Menu */}
                 <nav className="main-menu">
                   <div className="navbar-collapse show collapse clearfix">
                     <Menu />
                   </div>
                 </nav>
-                {/* Main Menu End*/}
-                {/*Mobile Navigation Toggler*/}
                 <div className="mobile-nav-toggler" onClick={handleMobileMenu}>
                   <span className="icon lnr-icon-bars" />
                 </div>
@@ -176,7 +173,6 @@ export default function Header2({
             </div>
           </div>
         </div>
-        {/* End Sticky Menu */}
       </header>
     </>
   );

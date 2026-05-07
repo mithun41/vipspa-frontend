@@ -25,7 +25,7 @@ export default function Home() {
       .then((data) => setHomeData(data))
       .catch((err) => console.error(err));
   }, []);
-  console.log(homeData?.hero?.slides);
+  // console.log(homeData?.hero?.slides);
   return (
     <>
       <Layout headerStyle={2} footerStyle={2}>

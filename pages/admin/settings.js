@@ -5,26 +5,32 @@ import withAuth from "../../components/withAuth";
 
 const AdminSettings = () => {
   const [loading, setLoading] = useState(true);
-  const [config, setConfig] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
+  const [ogPreview, setOgPreview] = useState(null);
 
+  // আপনার দেওয়া ডাটা অনুযায়ী সব ফিল্ড এখানে আছে
   const initialFormState = {
     id: null,
     site_name: "",
     footer_description: "",
     phone_number: "",
+    call_number: "", // Missing field 1
     email: "",
     address: "",
     mon_fri_time: "",
     sat_time: "",
     sun_time: "",
-    facebook_url: "",
-    twitter_url: "",
-    instagram_url: "",
+    whatsapp_number: "", // Missing field 2
+    telegram_link: "", // Missing field 3
+    site_url: "",
+    meta_title: "",
+    meta_description: "",
+    og_title: "",
     footer_logo: null,
+    og_image: null,
   };
 
   const [formData, setFormData] = useState(initialFormState);
-  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     fetchSettings();
@@ -33,18 +39,18 @@ const AdminSettings = () => {
   const fetchSettings = async () => {
     try {
       const res = await fetch(
-        "https://vipspa.pythonanywhere.com//api/vipspa/site-config/",
+        "https://vipspa.pythonanywhere.com/api/vipspa/site-config/"
       );
       const data = await res.json();
       if (data && data.length > 0) {
         const currentData = data[0];
-        setConfig(currentData);
-        // ডাটা সেট করার সময় null চেক করে খালি স্ট্রিং দেওয়া হয়েছে
         setFormData({
           ...currentData,
-          footer_logo: null, // ফাইল ইনপুট সব সময় নাল থাকে শুরুতে
+          footer_logo: null,
+          og_image: null,
         });
-        setPreview(currentData.footer_logo);
+        setLogoPreview(currentData.footer_logo);
+        setOgPreview(currentData.og_image);
       }
     } catch (err) {
       console.error("Fetch Error:", err);
@@ -53,27 +59,27 @@ const AdminSettings = () => {
     }
   };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("adminToken");
 
-    if (!token) {
-      alert("Session expired. Please login again.");
-      return;
-    }
-
     const data = new FormData();
     Object.keys(formData).forEach((key) => {
-      if (key === "footer_logo") {
-        if (formData[key] instanceof File) data.append(key, formData[key]);
+      if (key === "footer_logo" || key === "og_image") {
+        if (formData[key] instanceof File) {
+          data.append(key, formData[key]);
+        }
       } else {
-        // null বা undefined থাকলে খালি স্ট্রিং পাঠানো হচ্ছে
         data.append(key, formData[key] || "");
       }
     });
 
-    const baseUrl =
-      "https://vipspa.pythonanywhere.com//api/vipspa/site-config/";
+    const baseUrl = "https://vipspa.pythonanywhere.com/api/vipspa/site-config/";
     const url = formData.id ? `${baseUrl}${formData.id}/` : baseUrl;
     const method = formData.id ? "PATCH" : "POST";
 
@@ -87,297 +93,170 @@ const AdminSettings = () => {
       if (res.ok) {
         alert("Settings Updated Successfully! 🔥");
         fetchSettings();
-      } else if (res.status === 401) {
-        alert("Your session has expired. Please log in again.");
       } else {
-        const errData = await res.json();
-        alert(`Error: ${JSON.stringify(errData)}`);
+        alert("Failed to update settings.");
       }
     } catch (err) {
-      alert("Network Error! Please check your connection.");
+      alert("Network Error!");
     }
   };
 
   return (
     <AdminLayout>
       <div className="container-fluid py-4">
-        <div className="row">
-          {/* Left Side: Form Section */}
-          <div className="col-md-7">
-            <div className="card shadow-sm border-0 p-4">
-              <h5 className="fw-bold mb-4 text-primary border-bottom pb-2">
-                <i className="bi bi-gear-fill me-2"></i> Update Site
-                Configuration
-              </h5>
-              <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
+          <div className="row">
+            {/* Form Section */}
+            <div className="col-md-8">
+              <div className="card shadow-sm border-0 p-4 mb-4">
+                <h5 className="fw-bold mb-4 text-primary border-bottom pb-2">
+                  <i className="bi bi-gear-fill me-2"></i> Basic & Contact Info
+                </h5>
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="small fw-bold">Site Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.site_name || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, site_name: e.target.value })
-                      }
-                      required
-                    />
+                    <input type="text" name="site_name" className="form-control" value={formData.site_name} onChange={handleChange} />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="small fw-bold">Footer Logo</label>
-                    <input
-                      type="file"
-                      className="form-control"
-                      onChange={(e) => {
-                        const file = e.target.files[0];
-                        if (file) {
-                          setFormData({ ...formData, footer_logo: file });
-                          setPreview(URL.createObjectURL(file));
-                        }
-                      }}
-                    />
+                    <label className="small fw-bold">Site URL</label>
+                    <input type="text" name="site_url" className="form-control" value={formData.site_url} onChange={handleChange} />
+                  </div>
+
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">Phone Number</label>
+                    <input type="text" name="phone_number" className="form-control" value={formData.phone_number} onChange={handleChange} />
+                  </div>
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">Call Number</label>
+                    <input type="text" name="call_number" className="form-control" value={formData.call_number} onChange={handleChange} />
+                  </div>
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">WhatsApp Number</label>
+                    <input type="text" name="whatsapp_number" className="form-control" value={formData.whatsapp_number} onChange={handleChange} />
                   </div>
 
                   <div className="col-md-6 mb-3">
-                    <label className="small fw-bold">Phone Number</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.phone_number || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          phone_number: e.target.value,
-                        })
-                      }
-                    />
+                    <label className="small fw-bold">Email Address</label>
+                    <input type="email" name="email" className="form-control" value={formData.email} onChange={handleChange} />
                   </div>
                   <div className="col-md-6 mb-3">
-                    <label className="small fw-bold">Email Address</label>
-                    <input
-                      type="email"
-                      className="form-control"
-                      value={formData.email || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, email: e.target.value })
-                      }
-                    />
+                    <label className="small fw-bold">Telegram Link</label>
+                    <input type="text" name="telegram_link" className="form-control" value={formData.telegram_link} onChange={handleChange} />
                   </div>
 
                   <div className="col-md-12 mb-3">
                     <label className="small fw-bold">Full Address</label>
-                    <textarea
-                      className="form-control"
-                      rows="2"
-                      value={formData.address || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, address: e.target.value })
-                      }
-                    ></textarea>
-                  </div>
-
-                  <div className="col-md-4 mb-3">
-                    <label className="small fw-bold">Mon-Fri Hours</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.mon_fri_time || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          mon_fri_time: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-4 mb-3">
-                    <label className="small fw-bold">Saturday Hours</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.sat_time || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, sat_time: e.target.value })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-4 mb-3">
-                    <label className="small fw-bold">Sunday Hours</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.sun_time || ""}
-                      onChange={(e) =>
-                        setFormData({ ...formData, sun_time: e.target.value })
-                      }
-                    />
-                  </div>
-
-                  <div className="col-md-12 mb-3">
-                    <label className="small fw-bold">Footer Description</label>
-                    <textarea
-                      className="form-control"
-                      rows="3"
-                      value={formData.footer_description || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          footer_description: e.target.value,
-                        })
-                      }
-                    ></textarea>
-                  </div>
-
-                  <div className="col-md-4 mb-3">
-                    <label className="small fw-bold">Facebook URL</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.facebook_url || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          facebook_url: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-4 mb-3">
-                    <label className="small fw-bold">Twitter URL</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.twitter_url || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          twitter_url: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="col-md-4 mb-4">
-                    <label className="small fw-bold">Instagram URL</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={formData.instagram_url || ""}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          instagram_url: e.target.value,
-                        })
-                      }
-                    />
+                    <textarea name="address" className="form-control" rows="2" value={formData.address} onChange={handleChange}></textarea>
                   </div>
                 </div>
-
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100 fw-bold py-2 shadow-sm"
-                >
-                  <i className="bi bi-save me-2"></i> SAVE ALL CHANGES
-                </button>
-              </form>
-            </div>
-          </div>
-
-          {/* Right Side: Live Preview Section */}
-          <div className="col-md-5">
-            <div
-              className="card shadow-sm border-0 sticky-top"
-              style={{ top: "20px" }}
-            >
-              <div className="card-header bg-dark text-white fw-bold py-3">
-                <i className="bi bi-eye-fill me-2"></i> Live Footer Preview
               </div>
-              <div className="card-body bg-light border-top">
-                {loading ? (
-                  <div className="text-center py-5">
-                    <div
-                      className="spinner-border text-primary"
-                      role="status"
-                    ></div>
-                    <p className="mt-2 text-muted">Loading settings...</p>
+
+              {/* Working Hours */}
+              <div className="card shadow-sm border-0 p-4 mb-4">
+                <h5 className="fw-bold mb-4 text-warning border-bottom pb-2">
+                  <i className="bi bi-clock-fill me-2"></i> Working Hours
+                </h5>
+                <div className="row">
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">Mon-Fri Time</label>
+                    <input type="text" name="mon_fri_time" className="form-control" value={formData.mon_fri_time} onChange={handleChange} />
                   </div>
-                ) : config ? (
-                  <div className="text-center">
-                    {preview ? (
-                      <img
-                        src={preview}
-                        alt="Logo"
-                        className="img-fluid mb-3 p-2 bg-white rounded border"
-                        style={{ maxHeight: "70px", objectFit: "contain" }}
-                      />
-                    ) : (
-                      <div className="mb-3 p-3 bg-secondary text-white rounded">
-                        No Logo Selected
-                      </div>
-                    )}
-                    <h6 className="fw-bold text-uppercase">
-                      {config.site_name || "N/A"}
-                    </h6>
-                    <p className="small text-muted px-2">
-                      {config.footer_description || "No description provided."}
-                    </p>
-                    <hr className="my-4" />
-                    <div className="text-start small px-3">
-                      <p className="mb-2">
-                        <strong>
-                          <i className="bi bi-telephone-fill me-2 text-primary"></i>{" "}
-                          Phone:
-                        </strong>{" "}
-                        {config.phone_number || "N/A"}
-                      </p>
-                      <p className="mb-2">
-                        <strong>
-                          <i className="bi bi-envelope-fill me-2 text-primary"></i>{" "}
-                          Email:
-                        </strong>{" "}
-                        {config.email || "N/A"}
-                      </p>
-                      <p className="mb-3">
-                        <strong>
-                          <i className="bi bi-geo-alt-fill me-2 text-primary"></i>{" "}
-                          Address:
-                        </strong>{" "}
-                        {config.address || "N/A"}
-                      </p>
-                      <div className="bg-white p-3 rounded border">
-                        <p className="mb-1 text-primary fw-bold small">
-                          OPENING HOURS
-                        </p>
-                        <p className="mb-1 d-flex justify-content-between">
-                          <span>Mon-Fri:</span>{" "}
-                          <span className="text-dark">
-                            {config.mon_fri_time || "N/A"}
-                          </span>
-                        </p>
-                        <p className="mb-1 d-flex justify-content-between">
-                          <span>Saturday:</span>{" "}
-                          <span className="text-dark">
-                            {config.sat_time || "N/A"}
-                          </span>
-                        </p>
-                        <p className="mb-0 d-flex justify-content-between">
-                          <span>Sunday:</span>{" "}
-                          <span className="text-dark">
-                            {config.sun_time || "N/A"}
-                          </span>
-                        </p>
-                      </div>
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">Saturday Time</label>
+                    <input type="text" name="sat_time" className="form-control" value={formData.sat_time} onChange={handleChange} />
+                  </div>
+                  <div className="col-md-4 mb-3">
+                    <label className="small fw-bold">Sunday Time</label>
+                    <input type="text" name="sun_time" className="form-control" value={formData.sun_time} onChange={handleChange} />
+                  </div>
+                </div>
+              </div>
+
+              {/* SEO & Social Media Section */}
+              <div className="card shadow-sm border-0 p-4">
+                <h5 className="fw-bold mb-4 text-success border-bottom pb-2">
+                  <i className="bi bi-search me-2"></i> SEO & Open Graph (OG)
+                </h5>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="small fw-bold">Meta Title</label>
+                    <input type="text" name="meta_title" className="form-control" value={formData.meta_title} onChange={handleChange} />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="small fw-bold">OG Title</label>
+                    <input type="text" name="og_title" className="form-control" value={formData.og_title} onChange={handleChange} />
+                  </div>
+                  <div className="col-md-12 mb-3">
+                    <label className="small fw-bold">Meta Description</label>
+                    <textarea name="meta_description" className="form-control" rows="2" value={formData.meta_description} onChange={handleChange}></textarea>
+                  </div>
+                  <div className="col-md-12 mb-3">
+                    <label className="small fw-bold">Footer Description</label>
+                    <textarea name="footer_description" className="form-control" rows="3" value={formData.footer_description} onChange={handleChange}></textarea>
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="small fw-bold">Footer Logo</label>
+                    <input type="file" className="form-control" onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setFormData({ ...formData, footer_logo: file });
+                        setLogoPreview(URL.createObjectURL(file));
+                      }
+                    }} />
+                  </div>
+                  <div className="col-md-6 mb-3">
+                    <label className="small fw-bold">OG Image (Social Share)</label>
+                    <input type="file" className="form-control" onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setFormData({ ...formData, og_image: file });
+                        setOgPreview(URL.createObjectURL(file));
+                      }
+                    }} />
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary w-100 fw-bold mt-4 py-3 shadow">
+                  SAVE ALL CONFIGURATION
+                </button>
+              </div>
+            </div>
+
+            {/* Sidebar Previews */}
+            <div className="col-md-4">
+              <div className="card shadow-sm border-0 mb-4 sticky-top" style={{ top: "20px" }}>
+                <div className="card-header bg-dark text-white fw-bold">Live Previews</div>
+                <div className="card-body bg-light">
+                  {/* Logo Preview */}
+                  <div className="text-center border-bottom pb-3 mb-3">
+                    <p className="small fw-bold text-muted mb-2">LOGO PREVIEW</p>
+                    {logoPreview ? (
+                      <img src={logoPreview} alt="Logo" className="img-fluid" style={{ maxHeight: "60px" }} />
+                    ) : <div className="p-3 bg-white border small text-muted">No Logo</div>}
+                  </div>
+
+                  {/* Contact Info Preview */}
+                  <div className="small mb-3">
+                    <p className="mb-1"><strong>Call:</strong> {formData.call_number || "N/A"}</p>
+                    <p className="mb-1"><strong>WhatsApp:</strong> {formData.whatsapp_number || "N/A"}</p>
+                    <p className="mb-1"><strong>Telegram:</strong> {formData.telegram_link ? "Link Set" : "N/A"}</p>
+                  </div>
+
+                  {/* OG Card Preview */}
+                  <p className="small fw-bold text-muted mb-2">SOCIAL SHARE PREVIEW</p>
+                  <div className="border bg-white rounded overflow-hidden">
+                    {ogPreview ? (
+                      <img src={ogPreview} alt="OG" className="img-fluid w-100" style={{ height: "150px", objectFit: "cover" }} />
+                    ) : <div className="bg-secondary text-white d-flex align-items-center justify-content-center" style={{ height: "150px" }}>No OG Image</div>}
+                    <div className="p-2">
+                      <div className="fw-bold small text-truncate">{formData.og_title || formData.meta_title || "Site Title"}</div>
+                      <div className="text-muted" style={{ fontSize: "10px" }}>{formData.site_url || "example.com"}</div>
                     </div>
                   </div>
-                ) : (
-                  <div className="text-center py-5 text-muted">
-                    <i className="bi bi-exclamation-circle display-4 mb-3"></i>
-                    <p>No configuration found. Please add your settings.</p>
-                  </div>
-                )}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
     </AdminLayout>
   );

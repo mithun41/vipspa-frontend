@@ -14,7 +14,7 @@ const FloatingActionButton = () => {
 
   if (!config) return null;
 
-  const phone = config.phone_number?.replace("+", "");
+  const phone = config.whatsapp_number?.replace("+", "");
 
   const buttons = [
     {
@@ -26,8 +26,14 @@ const FloatingActionButton = () => {
     {
       id: 2,
       icon: "fab fa-telegram-plane",
-      url: `https://t.me/${phone}`,
+      url: `https://t.me/elitespagulshan`,
       color: "#229ED9",
+    },
+    {
+      id: 3,
+      icon: "fas fa-phone-alt", // কল আইকন
+      url: `tel:${phone}`, // সরাসরি কল করার জন্য tel: প্রোটোকল
+      color: "#3b82f6", // নীল রঙ (কলের জন্য মানানসই)
     },
   ];
 
@@ -38,8 +44,9 @@ const FloatingActionButton = () => {
           <a
             key={btn.id}
             href={btn.url}
-            target="_blank"
+            target={btn.id === 3 ? "_self" : "_blank"} // কলের জন্য একই ট্যাবে থাকা ভালো
             rel="noreferrer"
+            className="fab-button"
             style={{ ...styles.btn, backgroundColor: btn.color }}
           >
             <i
@@ -55,6 +62,9 @@ const FloatingActionButton = () => {
           div {
             right: 15px !important;
           }
+        }
+        .fab-button:hover {
+          transform: scale(1.1);
         }
       `}</style>
     </>

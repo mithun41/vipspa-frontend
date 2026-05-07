@@ -7,8 +7,6 @@ const ServiceDetails = () => {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   const [loading, setLoading] = useState(true);
-
-  // Accordion State for FAQ
   const [activeFaq, setActiveFaq] = useState(0);
 
   useEffect(() => {
@@ -18,6 +16,7 @@ const ServiceDetails = () => {
           "https://vipspa.pythonanywhere.com/api/vipspa/services/",
         );
         setServices(res.data);
+
         if (res.data.length > 0) {
           setSelectedService(res.data[0]);
         }
@@ -27,6 +26,7 @@ const ServiceDetails = () => {
         setLoading(false);
       }
     };
+
     fetchServices();
   }, []);
 
@@ -40,7 +40,7 @@ const ServiceDetails = () => {
     <section className="services-details">
       <div className="container">
         <div className="row">
-          {/* --- Sidebar Section --- */}
+          {/* --- SIDEBAR --- */}
           <div className="col-xl-4 col-lg-4">
             <div className="service-sidebar">
               <div className="sidebar-widget service-sidebar-single">
@@ -65,7 +65,7 @@ const ServiceDetails = () => {
                   </ul>
                 </div>
 
-                {/* Help Widget */}
+                {/* HELP BOX */}
                 <div className="service-details-help">
                   <div className="help-shape-1"></div>
                   <div className="help-shape-2"></div>
@@ -77,30 +77,18 @@ const ServiceDetails = () => {
                   </div>
                   <div className="help-contact">
                     <p>Need help? Talk to an expert</p>
-                    <a href="tel:12463330079">+892 ( 123 ) 112 - 9999</a>
-                  </div>
-                </div>
-
-                {/* PDF Download Widget */}
-                <div className="sidebar-widget service-sidebar-single mt-4">
-                  <div className="service-sidebar-single-btn">
-                    <Link href="#" className="theme-btn btn-style-one d-grid">
-                      <span className="btn-title">
-                        <span className="fas fa-file-pdf"></span> download pdf
-                        file
-                      </span>
-                    </Link>
+                    <a href="tel:+8801891450300">01891450300</a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* --- Content Section --- */}
+          {/* --- CONTENT --- */}
           <div className="col-xl-8 col-lg-8">
             {selectedService && (
               <div className="services-details__content">
-                {/* Main Image */}
+                {/* IMAGE */}
                 <img
                   src={selectedService.background_image}
                   alt={selectedService.title}
@@ -108,13 +96,32 @@ const ServiceDetails = () => {
                 />
 
                 <h3 className="mt-4">{selectedService.title}</h3>
-                <p>{selectedService.short_description}</p>
-                <p>{selectedService.long_description}</p>
 
+                {/* SHORT DESCRIPTION (QUILL SAFE) */}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: selectedService.short_description || "",
+                  }}
+                />
+
+                {/* LONG DESCRIPTION (QUILL FIX) */}
+                <div
+                  className="mt-3"
+                  dangerouslySetInnerHTML={{
+                    __html: selectedService.long_description || "",
+                  }}
+                />
+
+                {/* OVERVIEW */}
                 <div className="content mt-40">
                   <div className="text">
                     <h3>Service Overview</h3>
-                    <p>{selectedService.service_overview}</p>
+
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html: selectedService.service_overview || "",
+                      }}
+                    />
 
                     <blockquote className="blockquote-one">
                       Relax, Recharge, and Rediscover yourself with our
@@ -123,7 +130,7 @@ const ServiceDetails = () => {
                   </div>
                 </div>
 
-                {/* Dynamic FAQ Section */}
+                {/* FAQ */}
                 {selectedService.faq_data &&
                   selectedService.faq_data.length > 0 && (
                     <div className="mt-25">
@@ -137,15 +144,20 @@ const ServiceDetails = () => {
                         {selectedService.faq_data.map((faq, index) => (
                           <li key={index} className="accordion block">
                             <div
-                              className={`acc-btn ${activeFaq === index ? "active" : ""}`}
+                              className={`acc-btn ${
+                                activeFaq === index ? "active" : ""
+                              }`}
                               onClick={() => handleFaqClick(index)}
                               style={{ cursor: "pointer" }}
                             >
                               {faq.q}
                               <div className="icon fa fa-plus"></div>
                             </div>
+
                             <div
-                              className={`acc-content ${activeFaq === index ? "current" : ""}`}
+                              className={`acc-content ${
+                                activeFaq === index ? "current" : ""
+                              }`}
                               style={{
                                 display: activeFaq === index ? "block" : "none",
                               }}

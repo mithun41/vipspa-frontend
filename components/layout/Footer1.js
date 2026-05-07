@@ -53,7 +53,7 @@ export default function Footer1() {
                   </Link>
                 </div>
                 <div className="text">{config.footer_description}</div>
-                <ul className="social-icon">
+                {/* <ul className="social-icon">
                   <li>
                     <a
                       href={`https://wa.me/${config.phone_number?.replace("+", "")}`}
@@ -73,7 +73,7 @@ export default function Footer1() {
                       <i className="icon fab fa-telegram-plane"></i>
                     </a>
                   </li>
-                </ul>
+                </ul> */}
               </div>
             </div>
 
@@ -100,7 +100,18 @@ export default function Footer1() {
           </div>
         </div>
       </div>
-
+      {/* ফুল উইথ গুগল ম্যাপ উইথ ইনফো কার্ড (Gulshan Vip Spa) */}
+      {/* <div className="footer-map-full-width w-100 mt-5">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3650.793657837136!2d90.40886294827261!3d23.790361065124834!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755c7fc55958d21%3A0xac9176ef52c3b20f!2sGulshan%20Vip%20Spa!5e0!3m2!1sen!2sbd!4v1777462357610!5m2!1sen!2sbd"
+          width="100%"
+          height="450"
+          style={{ border: 0, display: "block" }}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div> */}
       <div className="footer-bottom">
         <div className="auto-container">
           <div className="inner-container">

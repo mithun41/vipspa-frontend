@@ -22,10 +22,9 @@ const DynamicSection = ({ section }) => {
 
             <div style={styles.divider}></div>
 
-            {/* HTML Description Render */}
+            {/* Custom Class for Rich Text */}
             <div
-              className="description-html"
-              style={styles.description}
+              className="custom-rich-text"
               dangerouslySetInnerHTML={{
                 __html: section.description || "",
               }}
@@ -53,18 +52,43 @@ const DynamicSection = ({ section }) => {
       </div>
 
       <style jsx>{`
-        .description-html :global(p) {
-          margin-bottom: 18px;
+        /* ব্যাকগ্রাউন্ডের সব লিস্ট স্টাইল মুছে নতুন করে তৈরি করা */
+        .custom-rich-text :global(ul) {
+          list-style: none !important;
+          padding: 0 !important;
+          margin: 20px 0 !important;
         }
 
-        .description-html :global(a) {
-          color: #b39359 !important; /* link color */
-          font-weight: 700;
-          text-decoration: underline;
+        .custom-rich-text :global(li) {
+          position: relative !important;
+          padding-left: 25px !important; /* ডটের জন্য জায়গা */
+          margin-bottom: 12px !important;
+          color: #666;
+          line-height: 1.6;
+          display: block !important;
         }
 
-        .description-html :global(a:hover) {
-          color: #c1121f !important;
+        /* কাস্টম ডট তৈরি (এটি অবশ্যই কাজ করবে) */
+        .custom-rich-text :global(li::before) {
+          content: "" !important;
+          position: absolute !important;
+          left: 0 !important;
+          top: 10px !important; /* টেক্সটের সাথে অ্যালাইনমেন্ট */
+          width: 8px !important;
+          height: 8px !important;
+          background-color: #b39359 !important; /* আপনার ব্র্যান্ড গোল্ড কালার */
+          border-radius: 50% !important;
+          display: inline-block !important;
+        }
+
+        .custom-rich-text :global(p) {
+          margin-bottom: 15px;
+          line-height: 1.8;
+          color: #666;
+        }
+
+        .custom-rich-text :global(strong) {
+          color: #333;
         }
       `}</style>
     </section>
@@ -75,15 +99,12 @@ const styles = {
   sectionContainer: {
     padding: "80px 0",
     backgroundColor: "#fffaf5",
-    overflow: "hidden",
   },
-
   container: {
     maxWidth: "1200px",
     margin: "0 auto",
     padding: "0 20px",
   },
-
   flexWrapper: {
     display: "flex",
     alignItems: "center",
@@ -91,12 +112,10 @@ const styles = {
     gap: "50px",
     flexWrap: "wrap",
   },
-
   textContent: {
     flex: "1",
     minWidth: "300px",
   },
-
   subtitle: {
     color: "#b39359",
     textTransform: "uppercase",
@@ -106,29 +125,19 @@ const styles = {
     display: "block",
     marginBottom: "10px",
   },
-
   title: {
-    fontSize: "42px",
+    fontSize: "clamp(28px, 5vw, 42px)",
     color: "#222",
     marginBottom: "20px",
     lineHeight: "1.2",
     fontFamily: "'Playfair Display', serif",
   },
-
   divider: {
     width: "60px",
     height: "3px",
     backgroundColor: "#b39359",
     marginBottom: "25px",
   },
-
-  description: {
-    fontSize: "16px",
-    color: "#666",
-    lineHeight: "1.8",
-    marginBottom: "30px",
-  },
-
   button: {
     display: "inline-block",
     padding: "15px 35px",
@@ -137,26 +146,23 @@ const styles = {
     textDecoration: "none",
     borderRadius: "50px",
     fontWeight: "600",
+    marginTop: "20px",
     transition: "0.3s",
     boxShadow: "0 10px 20px rgba(179,147,89,0.2)",
   },
-
   imageWrapper: {
     flex: "1",
     position: "relative",
     minWidth: "300px",
     textAlign: "center",
   },
-
   image: {
     width: "100%",
     maxWidth: "500px",
     borderRadius: "20px",
     position: "relative",
     zIndex: "2",
-    boxShadow: "0 20px 40px rgba(0,0,0,0.1)",
   },
-
   imageShape: {
     position: "absolute",
     top: "10%",
@@ -168,6 +174,5 @@ const styles = {
     zIndex: "1",
   },
 };
-
 
 export default DynamicSection;

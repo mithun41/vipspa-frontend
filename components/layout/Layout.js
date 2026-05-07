@@ -11,6 +11,9 @@ export default function Layout({ headTitle, breadcrumbTitle, children }) {
   const [scroll, setScroll] = useState(false);
   const [isMobileMenu, setMobileMenu] = useState(false);
   const [isSearch, setSearch] = useState(false);
+  
+  // এপিআই ডাটা রাখার জন্য স্টেট
+  const [siteConfig, setSiteConfig] = useState([]);
 
   const handleMobileMenu = () => {
     const nextValue = !isMobileMenu;
@@ -26,10 +29,23 @@ export default function Layout({ headTitle, breadcrumbTitle, children }) {
   const handleSearch = () => setSearch(!isSearch);
 
   useEffect(() => {
+    // ১. স্ক্রল হ্যান্ডেলার
     const onScroll = () => {
       setScroll(window.scrollY > 100);
     };
 
+    // ২. সাইট কনফিগ এপিআই কল করা (আপনার লোকাল হোস্ট এপিআই)
+    const fetchSiteConfig = async () => {
+      try {
+        const response = await fetch("https://vipspa.pythonanywhere.com/api/vipspa/site-config/");
+        const data = await response.json();
+        setSiteConfig(data); // ডাটা সেভ করা হচ্ছে (অ্যারে হিসেবে)
+      } catch (error) {
+        console.error("Site Config fetch error:", error);
+      }
+    };
+
+    fetchSiteConfig();
     document.addEventListener("scroll", onScroll);
 
     return () => {
@@ -39,7 +55,9 @@ export default function Layout({ headTitle, breadcrumbTitle, children }) {
 
   return (
     <>
-      <PageHead headTitle={headTitle} />
+      {/* এপিআই ডাটা PageHead এ পাঠানো হচ্ছে */}
+      <PageHead headTitle={headTitle} siteConfig={siteConfig} />
+      
       <div className="page-wrapper" id="top">
         <Header2
           scroll={scroll}
@@ -47,14 +65,18 @@ export default function Layout({ headTitle, breadcrumbTitle, children }) {
           handleMobileMenu={handleMobileMenu}
           isSearch={isSearch}
           handleSearch={handleSearch}
+          siteConfig={siteConfig} // যদি হেডারে লোগো বা নাম্বার লাগে
         />
 
         <main className="main">
           {breadcrumbTitle && <Breadcrumb breadcrumbTitle={breadcrumbTitle} />}
           {children}
         </main>
-        <FloatingActionButton />
-        <Footer1 />
+
+        <FloatingActionButton siteConfig={siteConfig} /> {/* কল/হোয়াটসঅ্যাপ বাটন ডাইনামিক করতে */}
+        
+        {/* ফুটারেও ডাটা পাঠিয়ে দিন */}
+        <Footer1 siteConfig={siteConfig} />
       </div>
       <BackToTop />
     </>
