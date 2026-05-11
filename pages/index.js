@@ -1,4 +1,5 @@
 import Layout from "@/components/layout/Layout";
+import Loading from "@/components/Loading";
 import About1 from "@/components/sections/About1";
 import About6 from "@/components/sections/About6";
 import Banner2 from "@/components/sections/Banner2";
@@ -15,23 +16,30 @@ import Services1 from "@/components/sections/Services1";
 import Team2 from "@/components/sections/Team2";
 import Testimonial1 from "@/components/sections/Testimonial1";
 import Video1 from "@/components/sections/Video1";
-import { useEffect, useState } from "react";
-export default function Home() {
-  const [homeData, setHomeData] = useState(null);
+import { useQuery } from "@tanstack/react-query"; 
 
-  useEffect(() => {
-    fetch("https://vipspa.pythonanywhere.com//api/vipspa/homepage/")
-      .then((res) => res.json())
-      .then((data) => setHomeData(data))
-      .catch((err) => console.error(err));
-  }, []);
-  // console.log(homeData?.hero?.slides);
+export default function Home() {
+  const { data: homeData, isLoading } = useQuery({
+    queryKey: ["homepageData"], // এই কী (key) দিয়ে ডাটা ক্যাশ হবে
+    queryFn: async () => {
+      const res = await fetch("https://vipspa.pythonanywhere.com/api/vipspa/homepage/");
+      if (!res.ok) throw new Error("Network response was not ok");
+      return res.json();
+    },
+    staleTime: 1000 * 60 * 10, 
+  });
+
+  
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}>
-        <Banner1 slides={homeData?.hero?.slides || []} />
-        <Clients1 />
-        <About6 about={homeData?.about || []} />
+      <Layout headerStyle={2} footerStyle={2} pageName="home">
+          {isLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <Banner1 slides={homeData?.hero?.slides || []} />
+          <Clients1 />
+          <About6 about={homeData?.about || []} />
         {homeData?.home_sections?.items?.map((section) => (
           <DynamicSection key={section.id} section={section} />
         ))}
@@ -43,8 +51,12 @@ export default function Home() {
         <Contact1 />
         <Testimonial1 testimonialData={homeData?.testimonials || []} />
         <Team2 teamData={homeData?.team || []} />
-        <Instagram1 />
+        {/* <Instagram1 /> */}
         <Blog1 blogData={homeData?.blog || []} />
+        </>
+      )}
+        
+        
       </Layout>
     </>
   );

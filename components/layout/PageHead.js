@@ -1,54 +1,52 @@
 import Head from "next/head";
-import { useEffect, useState } from "react";
 
-const PageHead = ({ headTitle }) => {
-  const [config, setConfig] = useState(null);
-
-  useEffect(() => {
-    // সাইট কনফিগ এপিআই থেকে ডাটা নিয়ে আসা
-    fetch("https://vipspa.pythonanywhere.com/api/vipspa/site-config/")
-      .then((res) => res.json())
-      .then((data) => {
-        if (data && data.length > 0) {
-          setConfig(data[0]); // প্রথম অবজেক্টটি সেট করা
-        }
-      });
-  }, []);
+const PageHead = ({ headTitle, metaDescription, siteConfig }) => {
+  // siteConfig jodi props theke na ase, tobe amra layout-er backup use korbo
+  const config = siteConfig || null;
 
   return (
     <>
       <Head>
-        {/* Title: যদি প্রপস থেকে টাইটেল আসে তবে সেটা, নাহলে ডাটাবেজের meta_title, নাহলে ডিফল্ট */}
+        {/* Title Logic: 
+            1. Layout theke dynamic title (jemon config.home_meta_title) ashle seta show korbe.
+            2. Na thakle headTitle (hardcoded title) show korbe.
+            3. Ki-chu na thakle default title.
+        */}
         <title>
-          {headTitle 
-            ? headTitle 
-            : (config?.meta_title || "Vip Spa Dhaka || Dhaka's Premier Destination")}
+          {headTitle || config?.meta_title || "VIP Spa Dhaka || Premier Spa Destination"}
         </title>
 
-        {/* Description: ডাটাবেজের meta_description ব্যবহার করা হয়েছে */}
+        {/* Description Logic: Layout theke pathano dynamic description ba default */}
         <meta
           name="description"
-          content={config?.meta_description || "Default description..."}
+          content={metaDescription || config?.meta_description || "Luxury spa and wellness services in Dhaka."}
         />
 
-        {/* Open Graph Tags: এগুলো এখন ডাটাবেজ থেকে আসবে */}
+        {/* Open Graph Tags */}
         <meta
           property="og:title"
-          content={config?.og_title || config?.meta_title || "Vip Spa Dhaka"}
+          content={headTitle || config?.og_title || config?.meta_title || "Elite Spa Dhaka"}
         />
         <meta
           property="og:description"
-          content={config?.meta_description || "Luxury spa services in Dhaka."}
+          content={metaDescription || config?.meta_description || "Experience top-tier luxury spa services."}
         />
         
-        {/* og:image: ডাটাবেজ থেকে আসা ইমেজের লিঙ্ক */}
-        <meta property="og:image" content={config?.og_image || "images/screenshort.jpg"} />
+        {/* og:image: Database theke og_image link */}
+        <meta 
+          property="og:image" 
+          content={config?.og_image || "/images/screenshot.jpg"} 
+        />
         
-        {/* og:url: ডাটাবেজের site_url ব্যবহার করা হয়েছে */}
-        <meta property="og:url" content={config?.site_url || "vipspadhaka.com"} />
+        {/* og:url */}
+        <meta 
+          property="og:url" 
+          content={config?.site_url || "https://vipspadhaka.com"} 
+        />
         
         <meta property="og:type" content="website" />
         
+        {/* Fonts */}
         <link
           href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cormorant:ital,wght@0,300;0,400;0,500;0,600;0,700;1,600&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&display=swap"
           rel="stylesheet"

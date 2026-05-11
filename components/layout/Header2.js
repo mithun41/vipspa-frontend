@@ -9,25 +9,13 @@ export default function Header2({
   isSearch,
   handleSearch,
   handleMobileMenu,
+  siteConfig  
 }) {
-  const [siteConfig, setSiteConfig] = useState(null);
+  
 
-  useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const res = await axios.get(
-          "https://vipspa.pythonanywhere.com/api/vipspa/homepage/"
-        );
-        // API রেসপন্স থেকে সাইট কনফিগ সেট করা হচ্ছে
-        setSiteConfig(res.data.site_config);
-      } catch (err) {
-        console.error("Error fetching site config:", err);
-      }
-    };
-    fetchConfig();
-  }, []);
+ 
 
-  const config = siteConfig || {};
+   const config = siteConfig?.[0] || {}; 
 
   return (
     <>

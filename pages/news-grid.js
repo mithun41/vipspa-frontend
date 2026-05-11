@@ -4,7 +4,7 @@ import NewsGrid from "@/components/sections/innerpages/NewsGrid";
 export default function News() {
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}>
+      <Layout headerStyle={2} footerStyle={2} pageName="blog">
         <PageTitle pageName="Blog" />
         <NewsGrid />
       </Layout>

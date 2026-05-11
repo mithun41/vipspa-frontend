@@ -26,7 +26,7 @@ export default function PagePricing() {
   }, []);
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}>
+      <Layout headerStyle={2} footerStyle={2} pageName="pricing">
         <PageTitle pageName="Our Pricing Plans" />
         <Pricing1 pricingData={homeData?.pricing || {}} />
         {/* <Video3 /> */}

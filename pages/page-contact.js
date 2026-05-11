@@ -5,7 +5,7 @@ import Contact from "@/components/sections/innerpages/Contact";
 export default function PageContact() {
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}>
+      <Layout headerStyle={2} footerStyle={2}   pageName="contact">
         <PageTitle pageName="Contact Us" />
 
         <Contact />

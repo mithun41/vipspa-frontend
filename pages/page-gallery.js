@@ -5,7 +5,7 @@ import PageTitle from "@/components/sections/PageTitle";
 export default function PageGallery() {
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}>
+      <Layout headerStyle={2} footerStyle={2} pageName="gallery">
         <PageTitle pageName="Gallery" />
         <Gallery />
       </Layout>
