@@ -14,6 +14,8 @@ const ManageServices = () => {
   const initialFormState = {
     id: null,
     title: "",
+    meta_title: "", // নতুন যুক্ত করা হয়েছে
+    meta_description: "", // নতুন যুক্ত করা হয়েছে
     short_description: "",
     long_description: "",
     service_overview: "",
@@ -47,7 +49,6 @@ const ManageServices = () => {
     }
   };
 
-  // ---------------- FAQ ----------------
   const handleFaqChange = (index, field, value) => {
     const updated = [...formData.faq_data];
     updated[index][field] = value;
@@ -66,14 +67,14 @@ const ManageServices = () => {
     setFormData({ ...formData, faq_data: updated });
   };
 
-  // ---------------- SUBMIT ----------------
   const handleSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("adminToken");
 
     const data = new FormData();
-
     data.append("title", formData.title);
+    data.append("meta_title", formData.meta_title || ""); // FormData-তে যুক্ত করা হয়েছে
+    data.append("meta_description", formData.meta_description || ""); // FormData-তে যুক্ত করা হয়েছে
     data.append("short_description", formData.short_description || "");
     data.append("long_description", formData.long_description || "");
     data.append("service_overview", formData.service_overview || "");
@@ -112,10 +113,8 @@ const ManageServices = () => {
     }
   };
 
-  // ---------------- FIXED EDIT ----------------
   const handleEditClick = (s) => {
     setIsEditing(true);
-
     let faqParsed = [{ q: "", a: "" }];
 
     try {
@@ -131,6 +130,8 @@ const ManageServices = () => {
     setFormData({
       id: s.id || null,
       title: s.title || "",
+      meta_title: s.meta_title || "", // Edit-এ ডাটা লোড হবে
+      meta_description: s.meta_description || "", // Edit-এ ডাটা লোড হবে
       short_description: s.short_description || "",
       long_description: s.long_description || "",
       service_overview: s.service_overview || "",
@@ -143,7 +144,6 @@ const ManageServices = () => {
 
     setIconPreview(s.icon || null);
     setBgPreview(s.background_image || null);
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
@@ -157,15 +157,13 @@ const ManageServices = () => {
   const handleDelete = async (id) => {
     if (!confirm("Are you sure?")) return;
     const token = localStorage.getItem("adminToken");
-
     await fetch(
-      `https://vipspa.pythonanywhere.com/api/elitespa/services/${id}/`,
+      `https://vipspa.pythonanywhere.com/api/vipspa/services/${id}/`, // URL ফিক্স করা হয়েছে (elitespa -> vipspa)
       {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       },
     );
-
     fetchServices();
   };
 
@@ -173,7 +171,6 @@ const ManageServices = () => {
     <AdminLayout>
       <div className="container-fluid py-4">
         <div className="row">
-          {/* FORM SIDE */}
           <div className="col-md-5">
             <div className="card shadow-sm border-0 p-4">
               <h5 className="fw-bold mb-4">
@@ -181,7 +178,6 @@ const ManageServices = () => {
               </h5>
 
               <form onSubmit={handleSubmit}>
-                {/* TITLE */}
                 <div className="mb-3">
                   <label className="small fw-bold">Service Title</label>
                   <input
@@ -193,81 +189,86 @@ const ManageServices = () => {
                   />
                 </div>
 
-                {/* SHORT */}
+                {/* SEO Meta Title */}
                 <div className="mb-3">
-                  <label className="small fw-bold">
-                    Short Description (List View)
-                  </label>
+                  <label className="small fw-bold text-primary">Meta Title (SEO)</label>
+                  <input
+                    className="form-control"
+                    placeholder="Enter meta title for SEO"
+                    value={formData.meta_title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, meta_title: e.target.value })
+                    }
+                  />
+                </div>
+
+                {/* SEO Meta Description */}
+                <div className="mb-3">
+                  <label className="small fw-bold text-primary">Meta Description (SEO)</label>
+                  <textarea
+                    className="form-control"
+                    rows="2"
+                    placeholder="Enter meta description for SEO"
+                    value={formData.meta_description}
+                    onChange={(e) =>
+                      setFormData({ ...formData, meta_description: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label className="small fw-bold">Short Description (List View)</label>
                   <textarea
                     className="form-control"
                     rows="2"
                     value={formData.short_description}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        short_description: e.target.value,
-                      })
+                      setFormData({ ...formData, short_description: e.target.value })
                     }
                   />
                 </div>
 
-                {/* QUILL */}
                 <div className="mb-3">
-                  <label className="small fw-bold">
-                    Long Description (Intro)
-                  </label>
-
+                  <label className="small fw-bold">Long Description (Intro)</label>
                   <ReactQuill
                     key={formData.id || "new"}
                     theme="snow"
                     value={formData.long_description}
                     onChange={(value) =>
-                      setFormData({
-                        ...formData,
-                        long_description: value,
-                      })
+                      setFormData({ ...formData, long_description: value })
                     }
                   />
                 </div>
 
-                {/* OVERVIEW */}
                 <div className="mb-3">
-                  <label className="small fw-bold">
-                    Service Overview (Detailed Content)
-                  </label>
+                  <label className="small fw-bold">Service Overview (Detailed Content)</label>
                   <textarea
                     className="form-control"
                     rows="4"
                     value={formData.service_overview}
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        service_overview: e.target.value,
-                      })
+                      setFormData({ ...formData, service_overview: e.target.value })
                     }
                   />
                 </div>
 
-                {/* FAQ */}
+                {/* FAQ Section */}
                 <div className="mb-4 p-3 bg-light rounded">
                   <label className="fw-bold small mb-2 d-block">FAQs</label>
-
                   {formData.faq_data.map((faq, i) => (
                     <div key={i} className="mb-2">
                       <input
+                        placeholder="Question"
                         className="form-control form-control-sm mb-1"
                         value={faq.q}
-                        onChange={(e) =>
-                          handleFaqChange(i, "q", e.target.value)
-                        }
+                        onChange={(e) => handleFaqChange(i, "q", e.target.value)}
                       />
                       <div className="d-flex gap-2">
                         <input
+                          placeholder="Answer"
                           className="form-control form-control-sm"
                           value={faq.a}
-                          onChange={(e) =>
-                            handleFaqChange(i, "a", e.target.value)
-                          }
+                          onChange={(e) => handleFaqChange(i, "a", e.target.value)}
                         />
                         <button
                           type="button"
@@ -279,27 +280,19 @@ const ManageServices = () => {
                       </div>
                     </div>
                   ))}
-
-                  <button
-                    type="button"
-                    className="btn btn-link p-0"
-                    onClick={addFaqField}
-                  >
+                  <button type="button" className="btn btn-link p-0" onClick={addFaqField}>
                     + Add FAQ
                   </button>
                 </div>
 
-                {/* IMAGES */}
+                {/* Images */}
                 <div className="mb-3">
                   <label className="small fw-bold">Icon Image</label>
                   <input
                     type="file"
                     className="form-control"
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        icon: e.target.files[0],
-                      })
+                      setFormData({ ...formData, icon: e.target.files[0] })
                     }
                   />
                 </div>
@@ -310,10 +303,7 @@ const ManageServices = () => {
                     type="file"
                     className="form-control"
                     onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        background_image: e.target.files[0],
-                      })
+                      setFormData({ ...formData, background_image: e.target.files[0] })
                     }
                   />
                 </div>

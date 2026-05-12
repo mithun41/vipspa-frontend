@@ -21,7 +21,7 @@ const Services1 = ({ servicesData }) => {
   const serviceItems = servicesData?.items || [];
 
   return (
-    <section className="services-section pt-0">
+    <section className="services-section pt-20">
       <div className="service1-pattrn1 bounce-y"></div>
 
       <div className="auto-container">

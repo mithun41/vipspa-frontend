@@ -105,16 +105,16 @@ function ServiceAdmin() {
       } else {
         const errorData = await res.json();
         console.error("Server Error:", errorData);
-        alert("ঝামেলা হয়েছে! কনসোল চেক করেন।");
+        alert("Failed to save service. Please check the console for details.");
       }
     } catch (err) {
-      alert("সার্ভারের সাথে কানেক্ট করা যাচ্ছে না!");
+      alert("Cannot connect to server!");
     }
   };
 
   // ৩. ডিলিট করা
   const handleDelete = async (id) => {
-    if (!confirm("মামা, ডিলিট করে দিব?")) return;
+    if (!confirm("Confirm Delete?")) return;
     const token = localStorage.getItem("adminToken");
 
     try {
@@ -124,7 +124,7 @@ function ServiceAdmin() {
       });
       if (res.ok) {
         fetchServices();
-        alert("সফলভাবে ডিলিট হয়েছে!");
+        alert("Successfully Deleted");
       }
     } catch (err) {
       alert("Delete failed!");

@@ -28,7 +28,7 @@ export default function PageAbout() {
 
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2} pageName="about">
+      <Layout headerStyle={2} footerStyle={2} pageName="about" canonicalPath="/page-about" >
         <PageTitle pageName="About Us" />
         {/* <About1 aboutData={homeData?.about || {}} /> */}
         <AboutPage />

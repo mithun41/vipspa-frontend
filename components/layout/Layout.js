@@ -15,11 +15,12 @@ const fetchSiteConfig = async () => {
   return response.json();
 };
 
-export default function Layout({ headTitle, breadcrumbTitle, pageName, children }) {
+export default function Layout({ headTitle,metaDescription,canonicalPath, breadcrumbTitle, pageName, children }) {
   const [scroll, setScroll] = useState(false);
   const [isMobileMenu, setMobileMenu] = useState(false);
   const [isSearch, setSearch] = useState(false);
-
+  const siteUrl = "https://vipspadhaka.com";
+  const fullCanonicalUrl = canonicalPath ? `${siteUrl}${canonicalPath}` : siteUrl;
   // TanStack Query logic
   const { data: siteConfig = [], isLoading } = useQuery({
     queryKey: ["siteConfig"],
@@ -37,24 +38,26 @@ export default function Layout({ headTitle, breadcrumbTitle, pageName, children 
   let dynamicTitle = headTitle;
   let dynamicDescription = config.home_meta_description;
 
-  if (pageName === "home") {
-    dynamicTitle = config.home_meta_title || headTitle;
-    dynamicDescription = config.home_meta_description;
-  } else if (pageName === "about") {
-    dynamicTitle = config.about_meta_title || headTitle;
-    dynamicDescription = config.about_meta_description;
-  } else if (pageName === "services") {
-    dynamicTitle = config.services_meta_title || headTitle;
-    dynamicDescription = config.services_meta_description;
-  } else if (pageName === "pricing") {
-    dynamicTitle = config.pricing_meta_title || headTitle;
-    dynamicDescription = config.pricing_meta_description;
-  } else if (pageName === "contact") {
-    dynamicTitle = config.contact_meta_title || headTitle;
-    dynamicDescription = config.contact_meta_description;
-  } else if (pageName === "blog") {
-    dynamicTitle = config.blog_meta_title || headTitle;
-    dynamicDescription = config.blog_meta_description;
+  if (!metaDescription) {
+    if (pageName === "home") {
+      dynamicTitle = config.home_meta_title || headTitle;
+      dynamicDescription = config.home_meta_description;
+    } else if (pageName === "about") {
+      dynamicTitle = config.about_meta_title || headTitle;
+      dynamicDescription = config.about_meta_description;
+    } else if (pageName === "services") {
+      dynamicTitle = config.services_meta_title || headTitle;
+      dynamicDescription = config.services_meta_description;
+    } else if (pageName === "pricing") {
+      dynamicTitle = config.pricing_meta_title || headTitle;
+      dynamicDescription = config.pricing_meta_description;
+    } else if (pageName === "contact") {
+      dynamicTitle = config.contact_meta_title || headTitle;
+      dynamicDescription = config.contact_meta_description;
+    } else if (pageName === "blog") {
+      dynamicTitle = config.blog_meta_title || headTitle;
+      dynamicDescription = config.blog_meta_description;
+    }
   }
 
   const handleMobileMenu = () => {
@@ -77,6 +80,7 @@ export default function Layout({ headTitle, breadcrumbTitle, pageName, children 
         headTitle={dynamicTitle} 
         metaDescription={dynamicDescription} 
         siteConfig={config} 
+        canonicalUrl={fullCanonicalUrl}
       />
       
       <div className="page-wrapper" id="top">

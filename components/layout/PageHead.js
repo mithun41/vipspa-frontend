@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-const PageHead = ({ headTitle, metaDescription, siteConfig }) => {
+const PageHead = ({ headTitle, metaDescription, siteConfig ,canonicalUrl}) => {
   // siteConfig jodi props theke na ase, tobe amra layout-er backup use korbo
   const config = siteConfig || null;
 
@@ -21,7 +21,7 @@ const PageHead = ({ headTitle, metaDescription, siteConfig }) => {
           name="description"
           content={metaDescription || config?.meta_description || "Luxury spa and wellness services in Dhaka."}
         />
-
+        <link rel="canonical" href={canonicalUrl} />
         {/* Open Graph Tags */}
         <meta
           property="og:title"

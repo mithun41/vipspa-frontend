@@ -2,9 +2,9 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/page-pricing": "pages/page-pricing.js",
   "/": "pages/index.js",
-  "/admin/settings": "pages/admin/settings.js",
   "/news-grid": "pages/news-grid.js",
-  "/page-services": "pages/page-services.js",
-  "/page-gallery": "pages/page-gallery.js"
+  "/page-contact": "pages/page-contact.js",
+  "/admin/services": "pages/admin/services.js"
 }

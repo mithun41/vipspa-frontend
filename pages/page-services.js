@@ -8,7 +8,7 @@ export default function PageTestimonial() {
   
   return (
     <>
-      <Layout headerStyle={2} footerStyle={2}  pageName="services">
+      <Layout headerStyle={2} footerStyle={2}  pageName="services" canonicalPath="/page-services" >
         <PageTitle pageName="Services" />
         <Services />
         <WhyChooseUs4 />

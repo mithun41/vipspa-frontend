@@ -15,7 +15,7 @@ const Services7 = () => {
         );
 
         // ১. ডাটা রিভার্স করা (যাতে নতুনগুলো আগে আসে)
-        // ২. slice(0, 4) দিয়ে প্রথম ৪টা নেওয়া
+        // ২. slice(0, 4) দিয়ে প্রথম ৪টা নেওয়া
         const latestFour = res.data.reverse().slice(0, 4);
 
         setPages(latestFour);
@@ -71,14 +71,12 @@ const Services7 = () => {
                           <div
                             className="bg-image-two"
                             style={{
-                              // ব্যাকএন্ডের main_image ব্যবহার করা হয়েছে
-                              backgroundImage: `url(${item.main_image || "/images/resource/service1-2.png"})`,
+                              backgroundImage: `url(${item.background_image || "/images/resource/service1-2.png"})`,
                             }}
                           ></div>
                         </div>
                         <div className="content-box">
                           <figure className="icon mb-0">
-                            {/* ডাইনামিক আইকন: যদি ব্যাকএন্ডে icon_image না থাকে তবে ডিফল্ট সিরিয়াল আইকন */}
                             <img
                               src={
                                 item.icon ||
@@ -93,7 +91,6 @@ const Services7 = () => {
                             />
                           </figure>
                           <h4 className="title">
-                            {/* ডাইনামিক আইডি বা স্লাগ দিয়ে লিংক */}
                             <Link href={`/page-service-details`}>
                               {item.title}
                             </Link>
@@ -104,6 +101,13 @@ const Services7 = () => {
                   </div>
                 ))}
                 {/* ম্যাপ ফাংশন শেষ */}
+
+                {/* --- SEE MORE SERVICES BUTTON ADDED HERE --- */}
+                <div className="col-lg-12 ml-200  mb-20 text-center text-sm-start">
+                    <Link href="/page-service-details" className="theme-btn btn-style-two">
+                        <span className="btn-title">SEE MORE SERVICES <i className="fa fa-angle-right ml-10"></i></span>
+                    </Link>
+                </div>
               </div>
             </div>
 

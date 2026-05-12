@@ -27,25 +27,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/admin/settings": [
+    "/admin/services": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/admin/settings.js"
+      "static/chunks/pages/admin/services.js"
     ],
     "/news-grid": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/news-grid.js"
     ],
-    "/page-gallery": [
+    "/page-contact": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/page-gallery.js"
+      "static/chunks/pages/page-contact.js"
     ],
-    "/page-services": [
+    "/page-pricing": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/page-services.js"
+      "static/chunks/pages/page-pricing.js"
     ]
   },
   "ampFirstPages": []

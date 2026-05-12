@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Link from "next/link";
-import Layout from "@/components/layout/Layout";
 
-const ServiceDetails = () => {
+const ServiceDetails = ({ onServiceChange }) => {
   const [services, setServices] = useState([]);
   const [selectedService, setSelectedService] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -18,7 +16,10 @@ const ServiceDetails = () => {
         setServices(res.data);
 
         if (res.data.length > 0) {
-          setSelectedService(res.data[0]);
+          const defaultService = res.data[0];
+          setSelectedService(defaultService);
+          // প্যারেন্টকে ডিফল্ট সার্ভিস ডাটা পাঠানো
+          if (onServiceChange) onServiceChange(defaultService);
         }
       } catch (err) {
         console.error("Error loading services", err);
@@ -29,6 +30,12 @@ const ServiceDetails = () => {
 
     fetchServices();
   }, []);
+
+  const handleServiceClick = (service) => {
+    setSelectedService(service);
+    // প্যারেন্টকে সিলেক্টেড সার্ভিস ডাটা পাঠানো (মেটা ডাটার জন্য)
+    if (onServiceChange) onServiceChange(service);
+  };
 
   const handleFaqClick = (index) => {
     setActiveFaq(activeFaq === index ? null : index);
@@ -54,7 +61,7 @@ const ServiceDetails = () => {
                         }
                       >
                         <a
-                          onClick={() => setSelectedService(service)}
+                          onClick={() => handleServiceClick(service)}
                           style={{ cursor: "pointer" }}
                         >
                           <i className="fas fa-angle-right"></i>
@@ -65,7 +72,6 @@ const ServiceDetails = () => {
                   </ul>
                 </div>
 
-                {/* HELP BOX */}
                 <div className="service-details-help">
                   <div className="help-shape-1"></div>
                   <div className="help-shape-2"></div>
@@ -88,7 +94,6 @@ const ServiceDetails = () => {
           <div className="col-xl-8 col-lg-8">
             {selectedService && (
               <div className="services-details__content">
-                {/* IMAGE */}
                 <img
                   src={selectedService.background_image}
                   alt={selectedService.title}
@@ -97,14 +102,12 @@ const ServiceDetails = () => {
 
                 <h3 className="mt-4">{selectedService.title}</h3>
 
-                {/* SHORT DESCRIPTION (QUILL SAFE) */}
                 <div
                   dangerouslySetInnerHTML={{
                     __html: selectedService.short_description || "",
                   }}
                 />
 
-                {/* LONG DESCRIPTION (QUILL FIX) */}
                 <div
                   className="mt-3"
                   dangerouslySetInnerHTML={{
@@ -112,17 +115,14 @@ const ServiceDetails = () => {
                   }}
                 />
 
-                {/* OVERVIEW */}
                 <div className="content mt-40">
                   <div className="text">
                     <h3>Service Overview</h3>
-
                     <div
                       dangerouslySetInnerHTML={{
                         __html: selectedService.service_overview || "",
                       }}
                     />
-
                     <blockquote className="blockquote-one">
                       Relax, Recharge, and Rediscover yourself with our
                       professional {selectedService.title} treatments.
@@ -130,16 +130,10 @@ const ServiceDetails = () => {
                   </div>
                 </div>
 
-                {/* FAQ */}
                 {selectedService.faq_data &&
                   selectedService.faq_data.length > 0 && (
                     <div className="mt-25">
                       <h3>Frequently Asked Question</h3>
-                      <p>
-                        Find quick answers to your questions about our{" "}
-                        {selectedService.title} service.
-                      </p>
-
                       <ul className="accordion-box">
                         {selectedService.faq_data.map((faq, index) => (
                           <li key={index} className="accordion block">
