@@ -19,7 +19,7 @@ export default function Layout({ headTitle,metaDescription,canonicalPath, breadc
   const [scroll, setScroll] = useState(false);
   const [isMobileMenu, setMobileMenu] = useState(false);
   const [isSearch, setSearch] = useState(false);
-  const siteUrl = "https://vipspadhaka.com";
+  const siteUrl = "https://www.vipspadhaka.com";
   const fullCanonicalUrl = canonicalPath ? `${siteUrl}${canonicalPath}` : siteUrl;
   // TanStack Query logic
   const { data: siteConfig = [], isLoading } = useQuery({
@@ -74,6 +74,7 @@ export default function Layout({ headTitle,metaDescription,canonicalPath, breadc
     document.addEventListener("scroll", onScroll);
     return () => document.removeEventListener("scroll", onScroll);
   }, []);
+  
   return (
     <>
       <PageHead 

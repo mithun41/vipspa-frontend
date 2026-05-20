@@ -35,7 +35,7 @@ const ManageAbout = () => {
   // 🔥 Quill config
   const modules = {
     toolbar: [
-      [{ header: [1, 2, false] }],
+      [{ header: [1, 2,3,4,5,6, false] }],
       ["bold", "italic", "underline"],
       ["link"],
       [{ list: "ordered" }, { list: "bullet" }],

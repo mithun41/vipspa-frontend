@@ -30,7 +30,29 @@ const ManageServices = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [iconPreview, setIconPreview] = useState(null);
   const [bgPreview, setBgPreview] = useState(null);
+const quillModules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ align: [] }],
+    ["link", "image"],
+    ["clean"],
+  ],
+};
 
+const quillFormats = [
+  "header",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "list",
+  "bullet",
+  "align",
+  "link",
+  "image",
+];
   useEffect(() => {
     fetchServices();
   }, []);
@@ -128,19 +150,21 @@ const ManageServices = () => {
     }
 
     setFormData({
-      id: s.id || null,
-      title: s.title || "",
-      meta_title: s.meta_title || "", // Edit-এ ডাটা লোড হবে
-      meta_description: s.meta_description || "", // Edit-এ ডাটা লোড হবে
-      short_description: s.short_description || "",
-      long_description: s.long_description || "",
-      service_overview: s.service_overview || "",
-      faq_data: faqParsed,
-      order: s.order ?? 0,
-      is_active: s.is_active ?? true,
-      icon: null,
-      background_image: null,
-    });
+  id: s.id || null,
+  title: s.title || "",
+  meta_title: s.meta_title || "",
+  meta_description: s.meta_description || "",
+  short_description: s.short_description || "",
+  long_description: s.long_description || "",
+  service_overview: s.service_overview || "",
+  faq_data: faqParsed,
+  order: s.order ?? 0,
+  is_active: s.is_active ?? true,
+
+  // এখানে fix
+  icon: s.icon || null,
+  background_image: s.background_image || null,
+});
 
     setIconPreview(s.icon || null);
     setBgPreview(s.background_image || null);
@@ -231,13 +255,14 @@ const ManageServices = () => {
                 <div className="mb-3">
                   <label className="small fw-bold">Long Description (Intro)</label>
                   <ReactQuill
-                    key={formData.id || "new"}
-                    theme="snow"
-                    value={formData.long_description}
-                    onChange={(value) =>
-                      setFormData({ ...formData, long_description: value })
-                    }
-                  />
+  theme="snow"
+  value={formData.long_description}
+  onChange={(value) =>
+    setFormData({ ...formData, long_description: value })
+  }
+  modules={quillModules}
+  formats={quillFormats}
+/>
                 </div>
 
                 <div className="mb-3">
@@ -287,26 +312,66 @@ const ManageServices = () => {
 
                 {/* Images */}
                 <div className="mb-3">
-                  <label className="small fw-bold">Icon Image</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={(e) =>
-                      setFormData({ ...formData, icon: e.target.files[0] })
-                    }
-                  />
-                </div>
+  <label className="small fw-bold">Icon Image</label>
 
-                <div className="mb-3">
-                  <label className="small fw-bold">Background Image</label>
-                  <input
-                    type="file"
-                    className="form-control"
-                    onChange={(e) =>
-                      setFormData({ ...formData, background_image: e.target.files[0] })
-                    }
-                  />
-                </div>
+  <input
+    type="file"
+    className="form-control"
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        icon: e.target.files[0],
+      })
+    }
+  />
+
+  {iconPreview && (
+    <div className="mt-2">
+      <img
+        src={iconPreview}
+        alt="Icon Preview"
+        style={{
+          width: "80px",
+          height: "80px",
+          objectFit: "cover",
+          borderRadius: "8px",
+          border: "1px solid #ddd",
+        }}
+      />
+    </div>
+  )}
+</div>
+
+               <div className="mb-3">
+  <label className="small fw-bold">Background Image</label>
+
+  <input
+    type="file"
+    className="form-control"
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        background_image: e.target.files[0],
+      })
+    }
+  />
+
+  {bgPreview && (
+    <div className="mt-2">
+      <img
+        src={bgPreview}
+        alt="Background Preview"
+        style={{
+          width: "140px",
+          height: "90px",
+          objectFit: "cover",
+          borderRadius: "8px",
+          border: "1px solid #ddd",
+        }}
+      />
+    </div>
+  )}
+</div>
 
                 <button
                   type="submit"

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import Loading from "@/components/Loading";
 
 const ServiceDetails = ({ onServiceChange }) => {
   const [services, setServices] = useState([]);
@@ -41,7 +42,7 @@ const ServiceDetails = ({ onServiceChange }) => {
     setActiveFaq(activeFaq === index ? null : index);
   };
 
-  if (loading) return <div className="text-center py-5">Loading...</div>;
+  if (loading) return <Loading />;
 
   return (
     <section className="services-details">

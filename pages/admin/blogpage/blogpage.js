@@ -15,34 +15,37 @@ const BlogManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [preview, setPreview] = useState(null);
   const [status, setStatus] = useState({ type: "", msg: "" });
-const modules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline"],
-    ["link"], // <-- link add করার জন্য
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["clean"],
-  ],
-};
 
-const formats = [
-  "header",
-  "bold",
-  "italic",
-  "underline",
-  "link",
-  "list",
-  "bullet",
-];
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3,4,5,6, false] }],
+      ["bold", "italic", "underline"],
+      ["link"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "link",
+    "list",
+    "bullet",
+  ];
+
   const initialFormState = {
     id: null,
     title: "",
-    content: "", // <-- null না, empty string
+    content: "",
     category: "",
     author: "Admin",
-    tags: "",
-    image: null,
+    tags: "", // ইনিশিয়াল স্টেট
     slug: "",
+    meta_title: "",
+    meta_description: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -92,6 +95,7 @@ const formats = [
     });
 
     const baseUrl = "https://vipspa.pythonanywhere.com/api/vipspa/blog-pages/";
+    // ব্যাকএন্ড lookup_field='slug' হওয়ায় এডিটের সময় অরিজিনাল slug-ই পাঠানো হয়েছে
     const url = isEditing ? `${baseUrl}${formData.slug}/` : baseUrl;
     const method = isEditing ? "PATCH" : "POST";
 
@@ -143,25 +147,25 @@ const formats = [
     }
   };
 
-const handleEditClick = (blog) => {
-  setIsEditing(true);
+  const handleEditClick = (blog) => {
+    setIsEditing(true);
 
-  setFormData((prev) => ({
-    ...prev,
-    id: blog.id,
-    title: blog.title || "",
-    content: blog.content || "",
-    category: blog.category ? String(blog.category) : "",
-    author: blog.author || "Admin",
-    tags: blog.tags || "",
-    image: null,
-    slug: blog.slug || "",
-  }));
-
-  setPreview(blog.image || null);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
+    setFormData((prev) => ({
+      ...prev,
+      id: blog.id,
+      title: blog.title || "",
+      content: blog.content || "",
+      category: blog.category ? String(blog.category) : "",
+      author: blog.author || "Admin",
+      tags: blog.tags || "", // এডিটের সময় ট্যাগ ডাটা লোড হবে
+      image: null,
+      slug: blog.slug || "",
+      meta_title: blog.meta_title || "",
+      meta_description: blog.meta_description || "",
+    }));
+    setPreview(blog.image || null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const resetForm = () => {
     setFormData(initialFormState);
@@ -172,11 +176,8 @@ const handleEditClick = (blog) => {
   return (
     <AdminLayout>
       <div className="main-wrapper py-4">
-        {/* Floating Alert Messages */}
         {status.msg && (
-          <div
-            className={`alert alert-${status.type} floating-alert shadow-sm border-0`}
-          >
+          <div className={`alert alert-${status.type} floating-alert shadow-sm border-0`}>
             {status.type === "success" ? "✅ " : "❌ "} {status.msg}
           </div>
         )}
@@ -185,89 +186,110 @@ const handleEditClick = (blog) => {
           <div className="row mb-4">
             <div className="col">
               <h2 className="fw-bold text-dark">Blog Management</h2>
-              <p className="text-muted small">
-                Create, edit and manage your blog posts and comments.
-              </p>
+              <p className="text-muted small">Create, edit and manage your blog posts and comments.</p>
             </div>
           </div>
 
           <div className="row g-4">
             {/* ব্লগ ফর্ম সেকশন */}
             <div className="col-lg-4">
-              <div
-                className="card border-0 shadow-sm sticky-top"
-                style={{ top: "20px", borderRadius: "12px" }}
-              >
+              <div className="card border-0 shadow-sm sticky-top" style={{ top: "20px", borderRadius: "12px" }}>
                 <div className="card-body p-4">
-                  <h5 className="fw-bold mb-4">
-                    {isEditing ? "Edit Post" : "Add New Post"}
-                  </h5>
+                  <h5 className="fw-bold mb-4">{isEditing ? "Edit Post" : "Add New Post"}</h5>
                   <form onSubmit={handleSubmit}>
+                    
+                    {/* TITLE */}
                     <div className="mb-3">
-                      <label className="form-label fw-semibold small">
-                        TITLE
-                      </label>
+                      <label className="form-label fw-semibold small">TITLE</label>
                       <input
                         type="text"
                         className="form-control custom-input"
                         value={formData.title || ""}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            title: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
                         required
                       />
                     </div>
 
+                    {/* SLUG */}
                     <div className="mb-3">
-                      <label className="form-label fw-semibold small">
-                        CATEGORY
-                      </label>
+                      <label className="form-label fw-semibold small text-secondary">SLUG (URL PATH)</label>
+                      <input
+                        type="text"
+                        className="form-control custom-input text-muted"
+                        placeholder="auto-generated-if-blank"
+                        value={formData.slug || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
+                      />
+                    </div>
+
+                    {/* CATEGORY */}
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small">CATEGORY</label>
                       <select
                         className="form-select custom-input"
                         value={formData.category}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            category: e.target.value,
-                          }))
-                        }
+                        onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
                         required
                       >
                         <option value="">Select Category</option>
                         {categories.map((cat) => (
-                          <option key={cat.id} value={cat.id}>
-                            {cat.name}
-                          </option>
+                          <option key={cat.id} value={cat.id}>{cat.name}</option>
                         ))}
                       </select>
                     </div>
 
+                    {/* TAGS (নতুন যুক্ত করা হয়েছে) */}
                     <div className="mb-3">
-                      <label className="form-label fw-semibold small">
-                        CONTENT
-                      </label>
+                      <label className="form-label fw-semibold small text-info">TAGS</label>
+                      <input
+                        type="text"
+                        className="form-control custom-input"
+                        placeholder="e.g. Spa, Relaxation, Health"
+                        value={formData.tags || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, tags: e.target.value }))}
+                      />
+                    </div>
+
+                    {/* SEO META TITLE */}
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small text-success">SEO META TITLE</label>
+                      <input
+                        type="text"
+                        className="form-control custom-input"
+                        placeholder="Google search title..."
+                        value={formData.meta_title || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, meta_title: e.target.value }))}
+                      />
+                    </div>
+
+                    {/* SEO META DESCRIPTION */}
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small text-success">SEO META DESCRIPTION</label>
+                      <textarea
+                        className="form-control custom-input"
+                        rows="3"
+                        placeholder="Google search snippet summary..."
+                        value={formData.meta_description || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, meta_description: e.target.value }))}
+                      />
+                    </div>
+
+                    {/* CONTENT */}
+                    <div className="mb-3">
+                      <label className="form-label fw-semibold small">CONTENT</label>
                       <ReactQuill
                         theme="snow"
                         value={formData.content}
-                        onChange={(value) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            content: value,
-                          }))
-                        }
+                        onChange={(value) => setFormData((prev) => ({ ...prev, content: value }))}
                         modules={modules}
                         formats={formats}
                         className="custom-quill"
                       />
                     </div>
 
+                    {/* COVER IMAGE */}
                     <div className="mb-4">
-                      <label className="form-label fw-semibold small">
-                        COVER IMAGE
-                      </label>
+                      <label className="form-label fw-semibold small">COVER IMAGE</label>
                       <input
                         type="file"
                         className="form-control custom-input mb-2"
@@ -279,13 +301,7 @@ const handleEditClick = (blog) => {
                           }
                         }}
                       />
-                      {preview && (
-                        <img
-                          src={preview}
-                          className="preview-box"
-                          alt="preview"
-                        />
-                      )}
+                      {preview && <img src={preview} className="preview-box" alt="preview" />}
                     </div>
 
                     <div className="d-grid gap-2">
@@ -297,11 +313,7 @@ const handleEditClick = (blog) => {
                         {isEditing ? "Update Post" : "Publish Post"}
                       </button>
                       {isEditing && (
-                        <button
-                          type="button"
-                          className="btn btn-outline-secondary border-0 btn-sm"
-                          onClick={resetForm}
-                        >
+                        <button type="button" className="btn btn-outline-secondary border-0 btn-sm" onClick={resetForm}>
                           Cancel Edit
                         </button>
                       )}
@@ -333,58 +345,43 @@ const handleEditClick = (blog) => {
                                   <span className="badge bg-light text-primary border border-primary-subtle mb-2">
                                     {blog.category_name}
                                   </span>
-                                  <h5 className="fw-bold text-dark mb-1">
-                                    {blog.title}
-                                  </h5>
-                                  <p className="text-muted small">
-                                    {new Date(blog.created_at).toDateString()}
-                                  </p>
+                                  <h5 className="fw-bold text-dark mb-1">{blog.title}</h5>
+                                  <p className="text-muted small">{new Date(blog.created_at).toDateString()}</p>
+                                  
+                                  {/* লিস্ট ভিউতে ট্যাগগুলো দেখানোর জন্য (ঐচ্ছিক) */}
+                                  {blog.tags && (
+                                    <div className="mt-1">
+                                      {blog.tags.split(",").map((tag, i) => (
+                                        <span key={i} className="badge bg-secondary-subtle text-secondary me-1 small">
+                                          #{tag.trim()}
+                                        </span>
+                                      ))}
+                                    </div>
+                                  )}
                                 </div>
                                 <div className="action-btns">
-                                  <button
-                                    className="btn btn-sm btn-outline-primary me-2"
-                                    onClick={() => handleEditClick(blog)}
-                                  >
+                                  <button className="btn btn-sm btn-outline-primary me-2" onClick={() => handleEditClick(blog)}>
                                     Edit
                                   </button>
-                                  <button
-                                    className="btn btn-sm btn-outline-danger"
-                                    onClick={() => handleDeleteBlog(blog.slug)}
-                                  >
+                                  <button className="btn btn-sm btn-outline-danger" onClick={() => handleDeleteBlog(blog.slug)}>
                                     Delete
                                   </button>
                                 </div>
                               </div>
 
-                              {/* <p className="text-secondary small mt-2">
-                                {blog.content?.substring(0, 150)}...
-                              </p> */}
-
-                              {/* Comment List inside Blog Card */}
+                              {/* Comment List */}
                               <div className="comment-wrapper mt-3">
                                 <h6 className="small fw-bold text-dark border-bottom pb-2">
                                   Comments ({blog.comments?.length || 0})
                                 </h6>
                                 {blog.comments &&
                                   blog.comments.map((comment) => (
-                                    <div
-                                      key={comment.id}
-                                      className="d-flex justify-content-between align-items-center py-2 border-bottom-dotted"
-                                    >
+                                    <div key={comment.id} className="d-flex justify-content-between align-items-center py-2 border-bottom-dotted">
                                       <div className="small">
-                                        <span className="fw-bold text-dark">
-                                          {comment.name}:{" "}
-                                        </span>
-                                        <span className="text-muted">
-                                          {comment.message}
-                                        </span>
+                                        <span className="fw-bold text-dark">{comment.name}: </span>
+                                        <span className="text-muted">{comment.message}</span>
                                       </div>
-                                      <button
-                                        className="btn btn-link text-danger p-0"
-                                        onClick={() =>
-                                          handleDeleteComment(comment.id)
-                                        }
-                                      >
+                                      <button className="btn btn-link text-danger p-0" onClick={() => handleDeleteComment(comment.id)}>
                                         ✖
                                       </button>
                                     </div>
@@ -404,86 +401,20 @@ const handleEditClick = (blog) => {
 
         {/* --- হোয়াইট মোড ক্লিন সিএসএস --- */}
         <style jsx>{`
-          .main-wrapper {
-            background-color: #f3f4f6;
-            min-height: 100vh;
-            color: #374151;
-          }
-          .custom-input {
-            background-color: #ffffff;
-            border: 1px solid #d1d5db;
-            padding: 10px;
-            font-size: 14px;
-            border-radius: 8px;
-          }
-          .custom-input:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-          }
-          .preview-box {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-          }
-          .blog-card {
-            background-color: #ffffff;
-            border-radius: 12px;
-            transition: all 0.3s;
-          }
-          .blog-card:hover {
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important;
-          }
-          .blog-img {
-            width: 100%;
-            height: 100%;
-            min-height: 180px;
-            object-fit: cover;
-            border-top-left-radius: 12px;
-            border-bottom-left-radius: 12px;
-          }
-          .comment-wrapper {
-            background-color: #f9fafb;
-            padding: 12px;
-            border-radius: 8px;
-          }
-          .border-bottom-dotted {
-            border-bottom: 1px dotted #e5e7eb;
-          }
-          .floating-alert {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-            background: white;
-            border-left: 4px solid #3b82f6;
-            min-width: 280px;
-            animation: fadeIn 0.4s ease;
-          }
-          .custom-quill .ql-container {
-            min-height: 150px;
-            border-radius: 0 0 8px 8px;
-          }
-          .custom-quill .ql-toolbar {
-            border-radius: 8px 8px 0 0;
-          }
-          @keyframes fadeIn {
-            from {
-              opacity: 0;
-              transform: translateY(-10px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          .action-btns .btn {
-            border-radius: 6px;
-            font-size: 12px;
-            padding: 4px 12px;
-            font-weight: 600;
-          }
+          .main-wrapper { background-color: #f3f4f6; min-height: 100vh; color: #374151; }
+          .custom-input { background-color: #ffffff; border: 1px solid #d1d5db; padding: 10px; font-size: 14px; border-radius: 8px; }
+          .custom-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+          .preview-box { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #e5e7eb; }
+          .blog-card { background-color: #ffffff; border-radius: 12px; transition: all 0.3s; }
+          .blog-card:hover { box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05) !important; }
+          .blog-img { width: 100%; height: 100%; min-height: 180px; object-fit: cover; border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+          .comment-wrapper { background-color: #f9fafb; padding: 12px; border-radius: 8px; }
+          .border-bottom-dotted { border-bottom: 1px dotted #e5e7eb; }
+          .floating-alert { position: fixed; top: 20px; right: 20px; z-index: 1050; background: white; border-left: 4px solid #3b82f6; min-width: 280px; animation: fadeIn 0.4s ease; }
+          .custom-quill .ql-container { min-height: 150px; border-radius: 0 0 8px 8px; }
+          .custom-quill .ql-toolbar { border-radius: 8px 8px 0 0; }
+          @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+          .action-btns .btn { border-radius: 6px; font-size: 12px; padding: 4px 12px; font-weight: 600; }
         `}</style>
       </div>
     </AdminLayout>

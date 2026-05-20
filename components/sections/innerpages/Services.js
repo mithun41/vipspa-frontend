@@ -10,6 +10,7 @@ const Services = () => {
     general_services: [],
     top_services: [],
   });
+  
 
   useEffect(() => {
     fetch("https://vipspa.pythonanywhere.com/api/vipspa/service-items/")

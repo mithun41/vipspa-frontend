@@ -84,8 +84,23 @@ const NewsDetails = () => {
   if (loading) return <div className="text-center py-5">Loading...</div>;
   if (!blog) return <div className="text-center py-5">Blog not found!</div>;
 
+  // --- 💡 ডাইনামিক এসইও প্রিপারেশন লজিক ---
+  // কাস্টম মেটা টাইটেল না থাকলে ব্লগের মেইন টাইটেল ব্যবহার হবে
+  const seoTitle = blog.meta_title || `${blog.title} | VIP SPA`;
+  
+  // কাস্টম মেটা ডেসক্রিপশন না থাকলে ব্লগের কন্টেন্ট থেকে প্রথম ১৫০ ক্যারেক্টার ক্লিন করে নেওয়া হবে
+  const seoDescription = blog.meta_description || 
+    (blog.content ? blog.content.replace(/<[^>]*>/g, '').substring(0, 150) + "..." : "");
+
   return (
-    <Layout headerStyle={2} footerStyle={2}>
+    /* --- 💡 লেআউটে ডাইনামিক প্রপস পাস করা হয়েছে --- */
+    <Layout 
+      headerStyle={2} 
+      footerStyle={2}
+      headTitle={seoTitle}
+      metaDescription={seoDescription}
+      canonicalPath={`/news-details/${blog.slug}`}
+    >
       <PageTitle pageName={blog.title} />
 
       <section className="blog-details py-5">
@@ -105,7 +120,7 @@ const NewsDetails = () => {
                 >
                   <img
                     src={blog.image}
-                    alt={blog.title}
+                    alt={blog.meta_title || blog.title}
                     style={{
                       width: "100%",
                       height: "100%",
@@ -140,7 +155,6 @@ const NewsDetails = () => {
                     {blog.title}
                   </h3>
 
-                  {/* 🔥 MAIN FIX HERE */}
                   <div
                     className="blog-details__text-2 text-muted"
                     style={{
@@ -176,7 +190,6 @@ const NewsDetails = () => {
                     >
                       <div className="w-100 py-2">
                         <h6 className="fw-bold mb-1">{comment.name}</h6>
-
                         <p className="mb-0 text-secondary">{comment.message}</p>
                       </div>
                     </div>
@@ -265,6 +278,7 @@ const NewsDetails = () => {
                     <div key={item.id} className="d-flex mb-3">
                       <img
                         src={item.image}
+                        alt={item.title}
                         style={{
                           width: "70px",
                           height: "70px",
@@ -273,7 +287,6 @@ const NewsDetails = () => {
                           marginRight: "10px",
                         }}
                       />
-
                       <div>
                         <Link href={`/news-details/${item.slug}`}>
                           {item.title}

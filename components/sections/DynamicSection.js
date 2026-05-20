@@ -56,13 +56,13 @@ const DynamicSection = ({ section }) => {
         .custom-rich-text :global(ul) {
           list-style: none !important;
           padding: 0 !important;
-          margin: 20px 0 !important;
+          margin: 5px 0 !important;
         }
 
         .custom-rich-text :global(li) {
           position: relative !important;
           padding-left: 25px !important; /* ডটের জন্য জায়গা */
-          margin-bottom: 12px !important;
+          margin-bottom: 2px !important;
           color: #666;
           line-height: 1.6;
           display: block !important;
@@ -97,7 +97,7 @@ const DynamicSection = ({ section }) => {
 
 const styles = {
   sectionContainer: {
-    padding: "80px 0",
+    padding: "20px 0",
     backgroundColor: "#fffaf5",
   },
   container: {
